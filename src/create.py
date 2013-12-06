@@ -1,5 +1,84 @@
 import numpy as np
+import sys
 from scipy.sparse import csr_matrix, identity, vstack, hstack
+from src import equations
+
+
+def create_matrix_ex_auto(df, k = 1):
+    """
+    USED FOR TESTING. automated matrix creation
+    """
+
+    # Number of equations
+    eq_n  = 4
+
+    # Create all the components of the A matrix (in this case, 4 diagonal
+    # matrices).
+    m       = df.size
+    eq_mtrx = []
+    for i in range(eq_n):
+        eq_mtrx.append(
+            identity(m, format='csr', dtype=np.cfloat)
+        )
+
+    # Create list of equation functions to utilize during matrix calculations.
+    eqs = [
+        equations.ueq_u,
+        equations.ueq_v,
+        equations.veq_u,
+        equations.veq_v
+    ]
+
+    # Data used from data frame
+    u_0   = "U:0"
+    v_0   = "A:0"
+
+    # Populate all matrices along their diagonal
+    for indx, row in df.iterrows():
+
+        # Obtain variables
+        u = row[u_0]
+        v = row[v_0]
+
+        for m_indx in range(eq_n):
+            eq_mtrx[m_indx][indx, indx] = eqs[m_indx](u, v, k)
+
+
+    # Make the first and last elements of the ueq_v diagonal matrix equal
+    # to 0 (boundary conditions).
+    eq_mtrx[0][0, 0]         = 1.0
+    eq_mtrx[0][m - 1, m - 1] = 1.0
+
+    eq_mtrx[1][0, 0]         = 0.0
+    eq_mtrx[1][m - 1, m - 1] = 0.0
+
+    # Stack all matrices to form the A matrix, such that the it follows the
+    # format:
+    #              u         v
+    #  U_eqn  [ ueq_u[]   ueq_v[] ]
+    #  V_eqn  [ veq_u[]   veq_v[] ]
+    #
+    # TODO: Find better way of combining matrices
+    A_top = hstack([eq_mtrx[0], eq_mtrx[1]])
+    A_bot = hstack([eq_mtrx[2], eq_mtrx[3]])
+    A     = vstack([A_top, A_bot]).tocsr()
+
+    # Top Corner is the identity matrix with the first first element tc[0,0]
+    # equal to 0.
+    tc      = identity(m, format='csr', dtype=np.cfloat)
+    tc[0,0] = 0.0
+    tc[m - 1, m - 1] = 0.0
+
+    # Create B matrix of zeros, where the top corner B[:m, :m] is the identity
+    # matrix.
+    B = vstack([
+        hstack([tc, csr_matrix((m,m))]),
+        csr_matrix((m, 2 * m))
+    ]).tocsr()
+
+    return A, B
+
+
 
 def create_matrix_ex(df, k = 1):
     """
@@ -16,7 +95,6 @@ def create_matrix_ex(df, k = 1):
 
     # Data used from data frame
     u_0   = "U:0"
-    # v_0   = "U:1"
     v_0   = "A:0"
 
     # Populate all matrices along their diagonal
@@ -61,31 +139,6 @@ def create_matrix_ex(df, k = 1):
 
     return A, B
 
-
-def create_matrix_yf(df, k = 1, row_n = 1.0050):
-    """
-    USED FOR TESTING.
-    Creates a matrix based on data at a fixed y-value
-    """
-
-    # Create B matrix using df
-    df      = df[df["Points:1"] == row_n]
-    m       = df.count()[0]
-    A       = identity(m, format='csr').asfptype()
-
-    # Populate diagonals using the values of U
-    indx    = 0
-    for u in df["U:0"]:
-        A[indx, indx] = -k**2 * u
-        indx += 1
-
-    # Generate A matrix
-    B = identity(m, format='csr').asfptype()
-    B[0, 0]  = 0.0
-    B[m - 1, m - 1] = 0.0
-    A[m - 1, m - 1] = 1.0
-
-    return A, B
 
 
 def main():
