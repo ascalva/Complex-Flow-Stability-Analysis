@@ -1,0 +1,8 @@
+# Ignore all matlab files
+**/*.mat
+
+# Ignore python cache
+**/__pycache__
+
+# Ignore all VTK files from OpenFOAM
+**/*.vtk

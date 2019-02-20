@@ -1,5 +1,4 @@
 import numpy as np
-# import pandas as pd
 from scipy.sparse import csr_matrix, identity, vstack, hstack
 
 def create_matrix_ex(df, k = 1):
@@ -17,6 +16,7 @@ def create_matrix_ex(df, k = 1):
 
     # Data used from data frame
     u_0   = "U:0"
+    # v_0   = "U:1"
     v_0   = "A:0"
 
     # Populate all matrices along their diagonal
@@ -31,7 +31,9 @@ def create_matrix_ex(df, k = 1):
 
     # Make the first and last elements of the ueq_v diagonal matrix equal
     # to 0.
-    ueq_v[0, 0]  = 0.0
+    ueq_u[0, 0]         = 1.0
+    ueq_v[0, 0]         = 0.0
+    ueq_u[m - 1, m - 1] = 1.0
     ueq_v[m - 1, m - 1] = 0.0
 
     # Stack all matrices to form the A matrix, such that the it follows the
@@ -48,6 +50,7 @@ def create_matrix_ex(df, k = 1):
     # equal to 0.
     tc      = identity(m, format='csr', dtype=np.cfloat)
     tc[0,0] = 0.0
+    tc[m - 1, m - 1] = 0.0
 
     # Create B matrix of zeros, where the top corner B[:m, :m] is the identity
     # matrix.
@@ -87,7 +90,7 @@ def create_matrix_yf(df, k = 1, row_n = 1.0050):
 
 def main():
     import pandas as pd
-    
+
     filename = "out.csv"
     df = pd.read_csv(filename)
     A,B = create_matrix_ex(df)
