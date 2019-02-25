@@ -4,7 +4,7 @@ from scipy.sparse import csr_matrix, identity, vstack, hstack
 from src import equations
 
 
-def create_matrix_ex_auto(df, k = 1):
+def create_matrix_A(df, k = 1):
     """
     USED FOR TESTING. automated matrix creation
     """
@@ -71,24 +71,26 @@ def create_matrix_ex_auto(df, k = 1):
         eq_mtrx[row] = hstack(eq_mtrx[row])
 
     # Vertically stack all rows
-    A = vstack(eq_mtrx)
+    return vstack(eq_mtrx)
 
+
+def create_matrix_B(m):
+    """
+    Construct a sparse matrix for B and apply boundary conditions
+    """
     # Top Corner is the identity matrix with the first first element tc[0,0]
-    # equal to 0.
+    # equal to 0 (boundary condition).
     tc      = identity(m, format='csr', dtype=np.cfloat)
     tc[0,0] = 0.0
     tc[m - 1, m - 1] = 0.0
 
     # Create B matrix of zeros, where the top corner B[:m, :m] is the identity
     # matrix.
-    B = vstack([
+    return vstack([
         hstack([tc, csr_matrix((m,m))]),
         csr_matrix((m, 2 * m))
     ]).tocsr()
-
-    return A, B
-
-
+    
 
 def create_matrix_ex(df, k = 1):
     """

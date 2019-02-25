@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.create import create_matrix_ex_auto
+from src.create import create_matrix_A, create_matrix_B
 from src.eigs import remove_inf_eigs
 
 def main():
@@ -12,7 +12,8 @@ def main():
     df = pd.read_csv(filename)
 
     # Build pre-configured A,B matrices with simulation data
-    A, B = create_matrix_ex_auto(df)
+    A  = create_matrix_A(df)
+    B  = create_matrix_B(df.size)
 
     # Remove infinite eigen values (map them to smaller values) and save the
     # resulting matrices as sparse matrices in a matlab file.
