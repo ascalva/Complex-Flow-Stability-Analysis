@@ -9,24 +9,29 @@ def create_matrix_ex_auto(df, k = 1):
     USED FOR TESTING. automated matrix creation
     """
 
-    # Number of equations
-    eq_n  = 4
+    # Initialize variables
+    eq_n    = 2
+    m       = df.size
+    eq_mtrx = []
 
     # Create all the components of the A matrix (in this case, 4 diagonal
     # matrices).
-    m       = df.size
-    eq_mtrx = []
-    for i in range(eq_n):
-        eq_mtrx.append(
-            identity(m, format='csr', dtype=np.cfloat)
-        )
+    for row in range(eq_n):
+        mtrx_row = []
+
+        for col in range(eq_n):
+            # Populate row of matrices
+            mtrx_row.append(
+                identity(m, format='csr', dtype=np.cfloat)
+            )
+
+        # Add row to eq_mtrx
+        eq_mtrx.append( mtrx_row )
 
     # Create list of equation functions to utilize during matrix calculations.
     eqs = [
-        equations.ueq_u,
-        equations.ueq_v,
-        equations.veq_u,
-        equations.veq_v
+        [equations.ueq_u, equations.ueq_v],
+        [equations.veq_u, equations.veq_v]
     ]
 
     # Data used from data frame
@@ -40,17 +45,20 @@ def create_matrix_ex_auto(df, k = 1):
         u = row[u_0]
         v = row[v_0]
 
-        for m_indx in range(eq_n):
-            eq_mtrx[m_indx][indx, indx] = eqs[m_indx](u, v, k)
+        # At a specific location, calculate the value for each matrix with
+        # its respective equation.
+        for r_indx in range(eq_n):
+            for c_indx in range(eq_n):
+                eq_mtrx[r_indx][c_indx][indx, indx] = eqs[r_indx][c_indx](u, v, k)
 
 
     # Make the first and last elements of the ueq_v diagonal matrix equal
     # to 0 (boundary conditions).
-    eq_mtrx[0][0, 0]         = 1.0
-    eq_mtrx[0][m - 1, m - 1] = 1.0
+    eq_mtrx[0][0][0, 0]         = 1.0
+    eq_mtrx[0][0][m - 1, m - 1] = 1.0
 
-    eq_mtrx[1][0, 0]         = 0.0
-    eq_mtrx[1][m - 1, m - 1] = 0.0
+    eq_mtrx[0][1][0, 0]         = 0.0
+    eq_mtrx[0][1][m - 1, m - 1] = 0.0
 
     # Stack all matrices to form the A matrix, such that the it follows the
     # format:
@@ -58,10 +66,12 @@ def create_matrix_ex_auto(df, k = 1):
     #  U_eqn  [ ueq_u[]   ueq_v[] ]
     #  V_eqn  [ veq_u[]   veq_v[] ]
     #
-    # TODO: Find better way of combining matrices
-    A_top = hstack([eq_mtrx[0], eq_mtrx[1]])
-    A_bot = hstack([eq_mtrx[2], eq_mtrx[3]])
-    A     = vstack([A_top, A_bot]).tocsr()
+    for row in range(eq_n):
+        # Horizontally stack each row
+        eq_mtrx[row] = hstack(eq_mtrx[row])
+
+    # Vertically stack all rows
+    A = vstack(eq_mtrx)
 
     # Top Corner is the identity matrix with the first first element tc[0,0]
     # equal to 0.
