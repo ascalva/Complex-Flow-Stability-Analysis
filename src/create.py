@@ -1,7 +1,16 @@
 import numpy as np
-from scipy.sparse import csr_matrix, identity, vstack, hstack
-from src.equations import equation_number, get_equations, get_vars
 
+from scipy.sparse import csr_matrix, identity, vstack, hstack
+from src.equations import get_equation_number, get_equations, get_vars, set_bound_conditions
+
+#
+# filename: create.py
+#
+# @author: Alberto Serrano (axs4986)
+#
+# purpose: Builds and populates A and B matrix based on the equations provided
+#          in the equations file.
+#
 
 def create_matrix_A(df, k = 1):
     """
@@ -9,7 +18,7 @@ def create_matrix_A(df, k = 1):
     """
 
     # Initialize variables
-    eq_n    = equation_number()
+    eq_n    = get_equation_number()
     m       = df.size
     eq_mtrx = []
 
@@ -46,20 +55,11 @@ def create_matrix_A(df, k = 1):
                 eq_mtrx[r_indx][c_indx][indx, indx] = eqs[r_indx][c_indx](*variables, k)
 
 
-    # Make the first and last elements of the ueq_v diagonal matrix equal
-    # to 0 (boundary conditions).
-    eq_mtrx[0][0][0, 0]         = 1.0
-    eq_mtrx[0][0][m - 1, m - 1] = 1.0
+    # Set boundary conditions in certain matrix equations
+    set_bound_conditions(eq_mtrx, m, "A")
 
-    eq_mtrx[0][1][0, 0]         = 0.0
-    eq_mtrx[0][1][m - 1, m - 1] = 0.0
-
-    # Stack all matrices to form the A matrix, such that the it follows the
-    # format:
-    #              u         v
-    #  U_eqn  [ ueq_u[]   ueq_v[] ]
-    #  V_eqn  [ veq_u[]   veq_v[] ]
-    #
+    # Stack all matrices to form the A matrix, such that the it retains the
+    # order provided by the equation matrix, eqs.
     for row in range(eq_n):
         # Horizontally stack each row
         eq_mtrx[row] = hstack(eq_mtrx[row])
@@ -72,11 +72,12 @@ def create_matrix_B(m):
     """
     Construct a sparse matrix for B and apply boundary conditions
     """
-    # Top Corner is the identity matrix with the first first element tc[0,0]
-    # equal to 0 (boundary condition).
+    # Top Corner of B-matrix is the identity matrix
     tc      = identity(m, format='csr', dtype=np.cfloat)
-    tc[0,0] = 0.0
-    tc[m - 1, m - 1] = 0.0
+
+    # Apply boundary conditions where the first first element, tc[0,0], is
+    # equal to 0.
+    set_bound_conditions(tc, m, "B")
 
     # Create B matrix of zeros, where the top corner B[:m, :m] is the identity
     # matrix.
