@@ -17,7 +17,7 @@ def main():
 
     # Remove infinite eigen values (map them to smaller values) and save the
     # resulting matrices as sparse matrices in a matlab file.
-    remove_inf_eigs(A, B, sparse = True, save_matrix = True)
+    remove_inf_eigs(A, B, save_matrix = True)
 
 
 main()

@@ -38,7 +38,7 @@ def create_permutation_matrix(B, shift_up):
     return (pr[index,:]).tocsr()
 
 
-def remove_inf_eigs_sparse(A, B, save_matrix):
+def remove_inf_eigs(A, B, save_matrix):
     """
     Implements the algo found in GoussisPearlstein_1989. Uses sparse scipy
     matrices so it's memory and time efficient. Saves the sparse matrices
@@ -81,42 +81,6 @@ def remove_inf_eigs_sparse(A, B, save_matrix):
 
     # Save sparse matrices to matlab file for later computation of eigenvalues
     if save_matrix: save_matrix_to_ml(F, G_B)
-
-
-
-def remove_inf_eigs_np(A, B, save_matrix):
-    """
-    Implements the algo found in GoussisPearlstein_1989. Uses numpy matrices
-    so it's not memory efficient, but easy to follow. Returns the eigenvalues
-    and eigenvectors found from the generalized eivenvalue problem.
-
-    :param verbose: prints out eigenvalues if True, does nothing otherwise
-    """
-
-    n, m  = B.shape
-    B_    = B[~np.all(B == 0, axis = 1)]
-    n_,m_ = B_.shape
-    k     = n - n_
-
-    O_2   = np.zeros((k, m))
-    E_k   = np.identity(k) * np.random.rand(k).reshape(k, 1)
-    B     = np.vstack([B_, O_2])
-
-    H     = A[:n - k,:]
-    P     = A[n - k:,:]
-
-    F     = np.vstack([H, np.dot(E_k, P)])
-    G_B   = np.vstack([-B_, P])
-
-    if save_matrix: save_matrix_to_ml(F, G_B)
-
-
-def remove_inf_eigs(A, B, sparse = True, save_matrix = True):
-    if sparse == True:
-        remove_inf_eigs_sparse(A, B, save_matrix)
-
-    else:
-        remove_inf_eigs_np(A, B, save_matrix)
 
 
 def init_AB():
