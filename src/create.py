@@ -1,7 +1,8 @@
 import numpy as np
 
 from scipy.sparse import csr_matrix, identity, vstack, hstack
-from src.equations import get_equation_number, get_equations, get_vars, set_bound_conditions
+from src.equations import get_equation_number, get_equations, get_vars, \
+                          set_bound_conditions
 
 #
 # filename: create.py
@@ -14,7 +15,10 @@ from src.equations import get_equation_number, get_equations, get_vars, set_boun
 
 def create_matrix_A(df, k = 1):
     """
-    USED FOR TESTING. automated matrix creation
+    Generalized function to build A matrix from a set of equations and
+    attributes supplied from the equatins file. Builds a sparse matrix for
+    every equation and combines them all in the order that was given by the
+    get_equations and get_vars functions.
     """
 
     # Initialize variables
@@ -70,10 +74,13 @@ def create_matrix_A(df, k = 1):
 
 def create_matrix_B(m):
     """
-    Construct a sparse matrix for B and apply boundary conditions
+    Construct a sparse matrix for B and apply boundary conditions. This will
+    consist of either a zero-matrix or an identity matrix for every matrix
+    equation.
+    TODO: STRUCTURE OF B-MATRIX STILL NEEDS TO BE GENERALIZED.
     """
     # Top Corner of B-matrix is the identity matrix
-    tc      = identity(m, format='csr', dtype=np.cfloat)
+    tc = identity(m, format='csr', dtype=np.cfloat)
 
     # Apply boundary conditions where the first first element, tc[0,0], is
     # equal to 0.
@@ -88,6 +95,9 @@ def create_matrix_B(m):
 
 
 def main():
+    """
+    TESTING
+    """
     import pandas as pd
 
     filename = "out.csv"

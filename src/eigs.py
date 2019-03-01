@@ -2,6 +2,16 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix, identity, vstack, hstack, issparse
 
+#
+# filename: eigs.py
+#
+# @author: Alberto Serrano (axs4986)
+#
+# purpose: Prepares the A and B matrices for eigenvalue computation in Matlab.
+#          Utilizes the GoussisPearlstein_1989 paper algorithm and permutation
+#          matrices.
+#
+
 def save_matrix_to_ml(F, G_B):
     """
     Saves F and G_B matrices to matlab file for later eigenvalue computation.

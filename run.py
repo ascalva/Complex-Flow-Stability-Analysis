@@ -9,7 +9,7 @@ def main():
     # out.csv is pre-filtered data from a 90-degree bend flow.
     # Simulation properties include: De = 5, delta = 1e-2, shear banding
     filename = "./data/out.csv"
-    df = pd.read_csv(filename)
+    df       = pd.read_csv(filename)
 
     # Build pre-configured A,B matrices with simulation data
     A  = create_matrix_A(df)
