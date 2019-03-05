@@ -16,7 +16,7 @@ def get_equation_number():
     """
     Return number of equations and unknowns for the given system.
     """
-    return 2
+    return 6
 
 
 def get_equations():
@@ -27,8 +27,13 @@ def get_equations():
     A matrix.
     """
     return [
-        [ueq_u, ueq_v],
-        [veq_u, veq_v]
+        [A11eq_p, A11eq_v1, A11eq_v2, A11eq_A11, A11eq_A12, A11eq_A22],
+        [A12eq_p, A12eq_v1, A12eq_v2, A12eq_A11, A12eq_A12, A12eq_A22],
+        [A22eq_p, A22eq_v1, A22eq_v2, A22eq_A11, A22eq_A12, A22eq_A22],
+        [x1eq_p,  x1eq_v1,  x1eq_v2,  x1eq_A11,  x1eq_A12,  x1eq_A22 ],
+        [x2eq_p,  x2eq_v1,  x2eq_v2,  x2eq_A11,  x2eq_A12,  x2eq_A22 ],
+        [Meq_p,   Meq_v1,   Meq_v2,   Meq_A11,   Meq_A12,   Meq_A22  ]
+
     ]
 
 
@@ -44,8 +49,8 @@ def get_vars():
         "Gradients U:0",  # v_1x_1
         "Gradients U:3",  # v_2x_1
         "Gradients U:4",  # v_2x_2
-        "U:1",            # v_0
-        "U:2"             # v_1
+        "U:1",            # v_1
+        "U:2"             # v_2
     ]
 
 
@@ -69,6 +74,14 @@ def set_bound_conditions(eq_mtrx, m, m_type):
     return
 
 
+def El_1():
+    return 1
+
+
+def Beta():
+    return 1
+
+
 
 ##############################################################################
 ################################# EQUATIONS ##################################
@@ -82,6 +95,9 @@ def A11eq_p(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0
 
 def A11eq_v1(params, k):
@@ -156,6 +172,7 @@ def A12eq_A22(params, k):
 
 
 ############################### A_22 Equation ################################
+# params = [A_11, A_12, A_22, v_1x_1, v_2x_1, v_2x_2, v_0, v_1]
 
 def A22eq_p(params, k):
     """
@@ -167,13 +184,13 @@ def A22eq_v1(params, k):
     """
     Calculate the -component of A_11 equation
     """
-    return 0
+    return - params[2] * 1j * k[0]
 
 def A22eq_v2(params, k):
     """
     Calculate the -component of A_11 equation
     """
-    return 0
+    return (params[2] * 1j * k[1]) + (2 * params[1] * 1j * k[0])
 
 def A22eq_A11(params, k):
     """
@@ -185,13 +202,131 @@ def A22eq_A12(params, k):
     """
     Calculate the -component of A_11 equation
     """
-    return 0
+    return 2 * params[4]
 
 def A22eq_A22(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return - params[3] + params[5] - 1
+
+
+########################### x_1 Momentum Equation ############################
+# params = [A_11, A_12, A_22, v_1x_1, v_2x_1, v_2x_2, v_0, v_1]
+
+def x1eq_p(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return - 1j * k[0]
+
+def x1eq_v1(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return - El_1() * ((params[6] * 1j * k[0]) + params[3] + params[5]) \
+           - Beta() * (k[0]**2 + k[1]**2)
+
+def x1eq_v2(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return - El_1() * params[6] * 1j * k[1]
+
+def x1eq_A11(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 1j * k[0]
+
+def x1eq_A12(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 1j * k[1]
+
+def x1eq_A22(params, k):
     """
     Calculate the -component of A_11 equation
     """
     return 0
 
 
-########################### x_1 Momentum Equation ############################
+########################### x_2 Momentum Equation ############################
+# params = [A_11, A_12, A_22, v_1x_1, v_2x_1, v_2x_2, v_0, v_1]
+
+def x2eq_p(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return - 1j * k[1]
+
+def x2eq_v1(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return - El_1() * params[7] * 1j * k[0]
+
+def x2eq_v2(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return - El_1() * ((params[7] * 1j * k[1]) + params[3] + params[5]) \
+           - Beta() * (k[0]**2 + k[1]**2)
+
+def x2eq_A11(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 0
+
+def x2eq_A12(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 1j * k[0]
+
+def x2eq_A22(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 1j * k[1]
+
+############################### Mass Equation ################################
+# params = [A_11, A_12, A_22, v_1x_1, v_2x_1, v_2x_2, v_0, v_1]
+
+def Meq_p(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 0
+
+def Meq_v1(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 1j * k[0]
+
+def Meq_v2(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 1j * k[1]
+
+def Meq_A11(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 0
+
+def Meq_A12(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 0
+
+def Meq_A22(params, k):
+    """
+    Calculate the -component of A_11 equation
+    """
+    return 0

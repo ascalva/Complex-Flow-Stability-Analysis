@@ -13,7 +13,7 @@ from src.equations import get_equation_number, get_equations, get_vars, \
 #          in the equations file.
 #
 
-def create_matrix_A(df, k = 1):
+def create_matrix_A(df, k = [1]):
     """
     Generalized function to build A matrix from a set of equations and
     attributes supplied from the equatins file. Builds a sparse matrix for
@@ -56,7 +56,7 @@ def create_matrix_A(df, k = 1):
         # its respective equation.
         for r_indx in range(eq_n):
             for c_indx in range(eq_n):
-                eq_mtrx[r_indx][c_indx][indx, indx] = eqs[r_indx][c_indx](*variables, k)
+                eq_mtrx[r_indx][c_indx][indx, indx] = eqs[r_indx][c_indx](variables, k)
 
 
     # Set boundary conditions in certain matrix equations
@@ -79,19 +79,53 @@ def create_matrix_B(m):
     equation.
     TODO: STRUCTURE OF B-MATRIX STILL NEEDS TO BE GENERALIZED.
     """
-    # Top Corner of B-matrix is the identity matrix
-    tc = identity(m, format='csr', dtype=np.cfloat)
+    # Initialize variables
+    eq_n    = get_equation_number()
+    eq_mtrx = []
+
+    # Create list of equation functions to utilize during matrix calculations.
+    eqs     = get_equations()
+
+    # Create all the components of the A matrix (in this case, 4 diagonal
+    # matrices).
+    for row in range(eq_n):
+        mtrx_row = []
+
+        for col in range(eq_n):
+
+            # Value across diagonal. If function (equation) gets empty lists,
+            # does no computation and returns value on left side of equation.
+            diag_val = eqs[row][col]([],[])
+
+            # Create zero matrix if left side of equation is zero
+            if diag_val == 0:
+                mtrx_row.append(
+                    csr_matrix((m, m), dtype=np.cfloat)
+                )
+
+            # Create identity matrix if left side is nonzero, utilize whatever
+            # value has been previously defined.
+            else:
+                mtrx = identity(m, format='csr', dtype=np.cfloat)
+                mtrx.setdiag( [diag_val] * m )
+                mtrx_row.append( mtrx )
+
+        # Add row to eq_mtrx
+        eq_mtrx.append( mtrx_row )
+
 
     # Apply boundary conditions where the first first element, tc[0,0], is
     # equal to 0.
-    set_bound_conditions(tc, m, "B")
+    set_bound_conditions(eq_mtrx, m, "B")
 
-    # Create B matrix of zeros, where the top corner B[:m, :m] is the identity
-    # matrix.
-    return vstack([
-        hstack([tc, csr_matrix((m,m))]),
-        csr_matrix((m, 2 * m))
-    ]).tocsr()
+    # Stack all matrices to form the A matrix, such that the it retains the
+    # order provided by the equation matrix, eqs.
+    for row in range(eq_n):
+        # Horizontally stack each row
+        eq_mtrx[row] = hstack(eq_mtrx[row])
+
+    # Vertically stack all rows
+    return vstack(eq_mtrx)
 
 
 def main():

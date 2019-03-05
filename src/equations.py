@@ -76,43 +76,63 @@ def set_bound_conditions_A(eq_mtrx, m):
     eq_mtrx[0][1][m - 1, m - 1] = 0.0
 
 
-def set_bound_conditions_B(tc, m):
+def set_bound_conditions_B(eq_mtrx, m):
     """
     Make the first and last elements of the ueq_v diagonal matrix equal
     to 0 (boundary conditions).
     """
     # Set top and bottom of rows of identity matrix equal to zero.
-    tc[0,0] = 0.0
-    tc[m - 1, m - 1] = 0.0
+    eq_mtrx[0][0][0,0] = 0.0
+    eq_mtrx[0][0][m - 1, m - 1] = 0.0
 
 
 ##############################################################################
 ################################# EQUATIONS ##################################
 ##############################################################################
 
-def ueq_u(u, v, k):
+def ueq_u(params, k):
     """
     Calculate the u-component of the U matrix.
     """
-    return v - k**2
+    if len(params) == 0:
+        return 1
+
+    u = params[0]
+    v = params[1]
+    return v - k[0]**2
 
 
-def ueq_v(u, v, k):
+def ueq_v(params, k):
     """
     Calculate the v-component of the U matrix.
     """
+    if len(params) == 0:
+        return 0
+
+    u = params[0]
+    v = params[1]
     return u
 
 
-def veq_u(u, v, k):
+def veq_u(params, k):
     """
     Calculate the u-component of the V matrix.
     """
-    return - 1j * k
+    if len(params) == 0:
+        return 0
+
+    u = params[0]
+    v = params[1]
+    return - 1j * k[0]
 
 
-def veq_v(u, v, k):
+def veq_v(params, k):
     """
     Calculate the v-component of the V matrix.
     """
+    if len(params) == 0:
+        return 0
+
+    u = params[0]
+    v = params[1]
     return 2 * v
