@@ -1,7 +1,7 @@
 import numpy as np
 
 from scipy.sparse import csr_matrix, identity, vstack, hstack
-from src.equations import get_equation_number, get_equations, get_vars, \
+from src.OB_equations import get_equation_number, get_equations, get_vars, \
                           set_bound_conditions
 
 #

@@ -104,30 +104,45 @@ def A11eq_v1(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return (params[0] * 1j * k[0]) + (2 * params[1] * 1j * k[1])
 
 def A11eq_v2(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - params[0] * 1j * k[1]
 
 def A11eq_A11(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return params[3] - params[5] - 1
 
 def A11eq_A12(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 2 * params[3]
 
 def A11eq_A22(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0
 
 
@@ -138,36 +153,54 @@ def A12eq_p(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0
 
 def A12eq_v1(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return params[2] * 1j * k[1]
 
 def A12eq_v2(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return params[0] * 1j * k[0]
 
 def A12eq_A11(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return params[4]
 
 def A12eq_A12(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0 # there's no value in pdf
 
 def A12eq_A22(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return params[3]
 
 
@@ -178,36 +211,54 @@ def A22eq_p(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0
 
 def A22eq_v1(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - params[2] * 1j * k[0]
 
 def A22eq_v2(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return (params[2] * 1j * k[1]) + (2 * params[1] * 1j * k[0])
 
 def A22eq_A11(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0
 
 def A22eq_A12(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 2 * params[4]
 
 def A22eq_A22(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - params[3] + params[5] - 1
 
 
@@ -218,12 +269,18 @@ def x1eq_p(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - 1j * k[0]
 
 def x1eq_v1(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - El_1() * ((params[6] * 1j * k[0]) + params[3] + params[5]) \
            - Beta() * (k[0]**2 + k[1]**2)
 
@@ -231,24 +288,36 @@ def x1eq_v2(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - El_1() * params[6] * 1j * k[1]
 
 def x1eq_A11(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 1j * k[0]
 
 def x1eq_A12(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 1j * k[1]
 
 def x1eq_A22(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0
 
 
@@ -259,18 +328,27 @@ def x2eq_p(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - 1j * k[1]
 
 def x2eq_v1(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - El_1() * params[7] * 1j * k[0]
 
 def x2eq_v2(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return - El_1() * ((params[7] * 1j * k[1]) + params[3] + params[5]) \
            - Beta() * (k[0]**2 + k[1]**2)
 
@@ -278,18 +356,27 @@ def x2eq_A11(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 0
 
 def x2eq_A12(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 1j * k[0]
 
 def x2eq_A22(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 1
+
     return 1j * k[1]
 
 ############################### Mass Equation ################################
@@ -299,34 +386,52 @@ def Meq_p(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 0
+
     return 0
 
 def Meq_v1(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 0
+
     return 1j * k[0]
 
 def Meq_v2(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 0
+
     return 1j * k[1]
 
 def Meq_A11(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 0
+
     return 0
 
 def Meq_A12(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 0
+
     return 0
 
 def Meq_A22(params, k):
     """
     Calculate the -component of A_11 equation
     """
+    if len(params) == 0:
+        return 0
+
     return 0

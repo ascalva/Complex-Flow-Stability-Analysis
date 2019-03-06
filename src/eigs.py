@@ -61,6 +61,7 @@ def remove_inf_eigs(A, B, save_matrix):
 
     # Find non-zero rows, or rows that aren't completely populated by 0's
     shift_up = np.array(np.nonzero(B)[0])
+    shift_up = np.unique(shift_up)
 
     # Find permutation matrix
     pr = create_permutation_matrix(B, shift_up)
@@ -121,7 +122,7 @@ def main():
     # shift_up   = np.array(np.nonzero(B_ex)[0])
     # create_permutation_matrix(B_ex, shift_up)
 
-    remove_inf_eigs_sparse(A_ex, B_ex, True)
+    remove_inf_eigs(A_ex, B_ex, False)
 
 if __name__ == "__main__":
     main()
