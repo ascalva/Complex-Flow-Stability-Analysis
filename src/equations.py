@@ -107,7 +107,7 @@ def ueq_v(params, k):
     Calculate the v-component of the U matrix.
     """
     if len(params) == 0:
-        return 1
+        return 0
 
     u = params[0]
     v = params[1]
@@ -119,7 +119,7 @@ def veq_u(params, k):
     Calculate the u-component of the V matrix.
     """
     if len(params) == 0:
-        return 1
+        return 0
 
     u = params[0]
     v = params[1]
@@ -131,7 +131,7 @@ def veq_v(params, k):
     Calculate the v-component of the V matrix.
     """
     if len(params) == 0:
-        return 1
+        return 0
 
     u = params[0]
     v = params[1]

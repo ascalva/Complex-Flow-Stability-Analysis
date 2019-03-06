@@ -78,12 +78,12 @@ def remove_inf_eigs(A, B, save_matrix):
     k     = n - n_
 
     # Initialize a diagonal matrix with random values.
-    E_k   = identity(k, format='csr')
-    E_k    .setdiag(np.random.rand(k))
+    E_k   = identity(k, format='csr', dtype=np.cfloat)
+    E_k    .setdiag(-np.random.rand(k))
 
     # Split A matrix to form the H and P matrices
-    H     = A[:n - k,:]
-    P     = A[n - k:,:]
+    H     = A[:n_,:]
+    P     = A[n_:,:]
 
     # Form the F and (G - B) matrices, which we will take the eigen values of.
     # Doing so results in no infinite eigen values.

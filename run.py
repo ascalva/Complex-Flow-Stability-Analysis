@@ -1,7 +1,7 @@
 import pandas as pd
 
 from src.create import create_matrix_A, create_matrix_B
-from src.eigs import remove_inf_eigs
+from src.eigs import remove_inf_eigs, save_matrix_to_ml
 
 def preprocess(df):
 
@@ -26,7 +26,7 @@ def preprocess(df):
     # Bound z-values
     df = df[df[z] == z_val]
 
-    return df
+    return df.reset_index()
 
 
 def main():
@@ -46,7 +46,8 @@ def main():
 
     # Build pre-configured A,B matrices with simulation data
     A  = create_matrix_A(df, k)
-    B  = create_matrix_B(df.size)
+    B  = create_matrix_B(df.shape[0])
+
 
     # Remove infinite eigen values (map them to smaller values) and save the
     # resulting matrices as sparse matrices in a matlab file.

@@ -9,6 +9,17 @@
 #
 
 ##############################################################################
+############################## SIMULATION PARAMS #############################
+##############################################################################
+
+LAMBDA = 0.1
+H      = 0.1
+ETA_S  = 0.1111111
+ETA_P  = 0.8888889
+El     = 10e6
+
+
+##############################################################################
 ############################## MATRIX STRUCTURE ##############################
 ##############################################################################
 
@@ -49,10 +60,10 @@ def get_vars():
         "Gradients U:0",  # v_1x_1
         "Gradients U:3",  # v_2x_1
         "Gradients U:4",  # v_2x_2
-        "U:1",            # v_1
-        "U:2"             # v_2
+        "U:0",            # v_1
+        "U:1"             # v_2
     ]
-
+#- params[7] * 1j * k[0]
 
 ##############################################################################
 ############################ BOUNDARY CONDITIONS #############################
@@ -75,11 +86,11 @@ def set_bound_conditions(eq_mtrx, m, m_type):
 
 
 def El_1():
-    return 1
+    return 1 / El
 
 
 def Beta():
-    return 1
+    return ETA_S / (ETA_S + ETA_P)
 
 
 
@@ -272,7 +283,7 @@ def x1eq_p(params, k):
     if len(params) == 0:
         return 1
 
-    return - 1j * k[0]
+    return - 1j * k[0] * El
 
 def x1eq_v1(params, k):
     """
@@ -281,8 +292,8 @@ def x1eq_v1(params, k):
     if len(params) == 0:
         return 1
 
-    return - El_1() * ((params[6] * 1j * k[0]) + params[3] + params[5]) \
-           - Beta() * (k[0]**2 + k[1]**2)
+    return - ((params[6] * 1j * k[0]) + params[3] + params[5]) \
+           - Beta() * (k[0]**2 + k[1]**2) * El
 
 def x1eq_v2(params, k):
     """
@@ -291,7 +302,7 @@ def x1eq_v2(params, k):
     if len(params) == 0:
         return 1
 
-    return - El_1() * params[6] * 1j * k[1]
+    return - params[6] * 1j * k[1]
 
 def x1eq_A11(params, k):
     """
@@ -300,7 +311,7 @@ def x1eq_A11(params, k):
     if len(params) == 0:
         return 1
 
-    return 1j * k[0]
+    return 1j * k[0] * El
 
 def x1eq_A12(params, k):
     """
@@ -309,7 +320,7 @@ def x1eq_A12(params, k):
     if len(params) == 0:
         return 1
 
-    return 1j * k[1]
+    return 1j * k[1] * El
 
 def x1eq_A22(params, k):
     """
@@ -331,7 +342,7 @@ def x2eq_p(params, k):
     if len(params) == 0:
         return 1
 
-    return - 1j * k[1]
+    return - 1j * k[1] * El
 
 def x2eq_v1(params, k):
     """
@@ -340,7 +351,7 @@ def x2eq_v1(params, k):
     if len(params) == 0:
         return 1
 
-    return - El_1() * params[7] * 1j * k[0]
+    return - params[7] * 1j * k[0]
 
 def x2eq_v2(params, k):
     """
@@ -349,8 +360,8 @@ def x2eq_v2(params, k):
     if len(params) == 0:
         return 1
 
-    return - El_1() * ((params[7] * 1j * k[1]) + params[3] + params[5]) \
-           - Beta() * (k[0]**2 + k[1]**2)
+    return - ((params[7] * 1j * k[1]) + params[3] + params[5]) \
+           - Beta() * (k[0]**2 + k[1]**2) * El
 
 def x2eq_A11(params, k):
     """
@@ -368,7 +379,7 @@ def x2eq_A12(params, k):
     if len(params) == 0:
         return 1
 
-    return 1j * k[0]
+    return 1j * k[0] * El
 
 def x2eq_A22(params, k):
     """
@@ -377,7 +388,7 @@ def x2eq_A22(params, k):
     if len(params) == 0:
         return 1
 
-    return 1j * k[1]
+    return 1j * k[1] * El
 
 ############################### Mass Equation ################################
 # params = [A_11, A_12, A_22, v_1x_1, v_2x_1, v_2x_2, v_0, v_1]

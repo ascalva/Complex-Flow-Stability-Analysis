@@ -1,6 +1,6 @@
 import numpy as np
 
-from scipy.sparse import csr_matrix, identity, vstack, hstack
+from scipy.sparse import csr_matrix, identity, vstack, hstack, lil_matrix
 from src.OB_equations import get_equation_number, get_equations, get_vars, \
                           set_bound_conditions
 
@@ -23,7 +23,7 @@ def create_matrix_A(df, k = [1]):
 
     # Initialize variables
     eq_n    = get_equation_number()
-    m       = df.size
+    m,_     = df.shape
     eq_mtrx = []
 
     # Create all the components of the A matrix (in this case, 4 diagonal
@@ -34,7 +34,7 @@ def create_matrix_A(df, k = [1]):
         for col in range(eq_n):
             # Populate row of matrices
             mtrx_row.append(
-                identity(m, format='csr', dtype=np.cfloat)
+                lil_matrix((m, m), dtype=np.cfloat)
             )
 
         # Add row to eq_mtrx
@@ -58,7 +58,6 @@ def create_matrix_A(df, k = [1]):
             for c_indx in range(eq_n):
                 eq_mtrx[r_indx][c_indx][indx, indx] = eqs[r_indx][c_indx](variables, k)
 
-
     # Set boundary conditions in certain matrix equations
     set_bound_conditions(eq_mtrx, m, "A")
 
@@ -69,7 +68,7 @@ def create_matrix_A(df, k = [1]):
         eq_mtrx[row] = hstack(eq_mtrx[row])
 
     # Vertically stack all rows
-    return vstack(eq_mtrx)
+    return vstack(eq_mtrx).tocsr()
 
 
 def create_matrix_B(m):
@@ -84,48 +83,54 @@ def create_matrix_B(m):
     eq_mtrx = []
 
     # Create list of equation functions to utilize during matrix calculations.
-    eqs     = get_equations()
+    # eqs     = get_equations()
+    #
+    # # Create all the components of the A matrix (in this case, 4 diagonal
+    # # matrices).
+    # for row in range(eq_n):
+    #     mtrx_row = []
+    #
+    #     for col in range(eq_n):
+    #
+    #         # Value across diagonal. If function (equation) gets empty lists,
+    #         # does no computation and returns value on left side of equation.
+    #         diag_val = eqs[row][col]([],[])
+    #
+    #         # Create zero matrix if left side of equation is zero
+    #         if diag_val == 0:
+    #             mtrx_row.append(
+    #                 csr_matrix((m, m), dtype=np.cfloat)
+    #             )
+    #
+    #         # Create identity matrix if left side is nonzero, utilize whatever
+    #         # value has been previously defined.
+    #         else:
+    #             mtrx = identity(m, format='csr', dtype=np.cfloat)
+    #             mtrx.setdiag( [diag_val] * m )
+    #             mtrx_row.append( mtrx )
+    #
+    #     # Add row to eq_mtrx
+    #     eq_mtrx.append( mtrx_row )
 
-    # Create all the components of the A matrix (in this case, 4 diagonal
-    # matrices).
-    for row in range(eq_n):
-        mtrx_row = []
-
-        for col in range(eq_n):
-
-            # Value across diagonal. If function (equation) gets empty lists,
-            # does no computation and returns value on left side of equation.
-            diag_val = eqs[row][col]([],[])
-
-            # Create zero matrix if left side of equation is zero
-            if diag_val == 0:
-                mtrx_row.append(
-                    csr_matrix((m, m), dtype=np.cfloat)
-                )
-
-            # Create identity matrix if left side is nonzero, utilize whatever
-            # value has been previously defined.
-            else:
-                mtrx = identity(m, format='csr', dtype=np.cfloat)
-                mtrx.setdiag( [diag_val] * m )
-                mtrx_row.append( mtrx )
-
-        # Add row to eq_mtrx
-        eq_mtrx.append( mtrx_row )
+    top = identity((eq_n - 1) * m, format='csr', dtype=np.cfloat)
+    side = csr_matrix(((eq_n - 1) * m, m), dtype=np.cfloat)
+    top = hstack([top, side])
+    tot = vstack([top, csr_matrix((m, eq_n *m), dtype=np.cfloat)])
 
 
     # Apply boundary conditions where the first first element, tc[0,0], is
     # equal to 0.
-    set_bound_conditions(eq_mtrx, m, "B")
+    # set_bound_conditions(eq_mtrx, m, "B")
 
     # Stack all matrices to form the A matrix, such that the it retains the
     # order provided by the equation matrix, eqs.
-    for row in range(eq_n):
-        # Horizontally stack each row
-        eq_mtrx[row] = hstack(eq_mtrx[row])
+    # for row in range(eq_n):
+    #     # Horizontally stack each row
+    #     eq_mtrx[row] = hstack(eq_mtrx[row])
 
     # Vertically stack all rows
-    return vstack(eq_mtrx)
+    # return vstack(eq_mtrx)
+    return tot
 
 
 def main():
