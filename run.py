@@ -11,8 +11,11 @@ def main():
     filename = "data/OB_crossslot_symmetric_De0.37.csv"
     df       = pd.read_csv(filename)
 
-    # Clean up data
+    # Bound data
     df = bound(df)
+
+    # Fix values in data by negating those on right side
+    negate(df)
 
     # Create A matrices for different values of k
     k_minits = (1,3)

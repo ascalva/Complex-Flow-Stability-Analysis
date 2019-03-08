@@ -1,7 +1,32 @@
+#
+# filename: preprocess.py
+#
+# @author: Alberto Serrano
+#
+# purpose: All functions used to clean, filter, or alter data before matrix
+#          computation exist here.
+#
+
+# Define bounding values
+X_MIN = 1.0
+X_MAX = 1.1
+Y_MIN = 1.0
+Y_MAX = 1.1
+Z_VAL = 0.01
+
+
 def negate_threshold():
+    """
+    Values (for specific attribute) above threshold will be negated.
+    """
     return 1.05
 
+
 def negate_attributes():
+    """
+    Return a list of attributes where their values will be negated above the
+    specified threshold.
+    """
     return [
         "A:1",            # A_12
         "U:0",            # v_1
@@ -13,19 +38,18 @@ def negate_attributes():
     ]
 
 def negate(df):
+    """
+    Negates the values of specific attributes to the right of a threshold.
+    """
     x = "Points:0"
     for attr in negate_attributes():
         df.loc[df[x] > negate_threshold(), attr] *= -1
 
 
 def bound(df):
-
-    # Define bounding values
-    x_min = 1.0
-    x_max = 1.1
-    y_min = 1.0
-    y_max = 1.1
-    z_val = 0.01
+    """
+    Using the bounding conditions above, filters out data not in that range.
+    """
 
     # Define attribute names
     x = "Points:0"
@@ -33,12 +57,12 @@ def bound(df):
     z = "Points:2"
 
     # Bound x-values
-    df = df[(df[x] >= x_min) & (df[x] <= x_max)]
+    df = df[(df[x] >= X_MIN) & (df[x] <= X_MAX)]
 
     # Bound y-values
-    df = df[(df[y] >= y_min) & (df[y] <= y_max)]
+    df = df[(df[y] >= Y_MIN) & (df[y] <= Y_MAX)]
 
     # Bound z-values
-    df = df[df[z] == z_val]
+    df = df[df[z] == Z_VAL]
 
-    return df.reset_index()
+    return df.reset_index(drop=True)

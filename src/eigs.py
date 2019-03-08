@@ -90,8 +90,6 @@ def remove_inf_eigs(A, B):
     F     = vstack([H, E_k * P])
     G_B   = vstack([-B[:n_,:], P])
 
-    # Save sparse matrices to matlab file for later computation of eigenvalues
-    # if save_matrix: save_matrix_to_ml(F, G_B)
     return F, G_B
 
 
