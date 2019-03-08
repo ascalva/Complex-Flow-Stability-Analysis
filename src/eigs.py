@@ -12,7 +12,7 @@ from scipy.sparse import csr_matrix, identity, vstack, hstack, issparse
 #          matrices.
 #
 
-def save_matrix_to_ml(F, G_B):
+def save_matrix_to_ml(F, G_B, filename = "sparse_matrices"):
     """
     Saves F and G_B matrices to matlab file for later eigenvalue computation.
     The sparse form of the matries is preserved to keep the data memory
@@ -20,7 +20,7 @@ def save_matrix_to_ml(F, G_B):
     """
     from scipy.io import savemat
 
-    savemat("sparse_matrices", {"G_B": G_B, "F": F})
+    savemat(filename, {"G_B": G_B, "F": F})
 
 
 def create_permutation_matrix(B, shift_up):
@@ -48,7 +48,7 @@ def create_permutation_matrix(B, shift_up):
     return (pr[index,:]).tocsr()
 
 
-def remove_inf_eigs(A, B, save_matrix):
+def remove_inf_eigs(A, B):
     """
     Implements the algo found in GoussisPearlstein_1989. Uses sparse scipy
     matrices so it's memory and time efficient. Saves the sparse matrices
@@ -91,7 +91,8 @@ def remove_inf_eigs(A, B, save_matrix):
     G_B   = vstack([-B[:n_,:], P])
 
     # Save sparse matrices to matlab file for later computation of eigenvalues
-    if save_matrix: save_matrix_to_ml(F, G_B)
+    # if save_matrix: save_matrix_to_ml(F, G_B)
+    return F, G_B
 
 
 def init_AB():
