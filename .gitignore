@@ -1,6 +1,5 @@
 # Ignore all matlab files (too large)
 **/*.mat
-out
 
 # Ignore python cache
 **/__pycache__
@@ -8,4 +7,3 @@ out
 # Ignore all VTK files from OpenFOAM (too large)
 **/*.vtk
 simulations
-
