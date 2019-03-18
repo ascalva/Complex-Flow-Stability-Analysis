@@ -18,8 +18,8 @@ def main():
     negate(df)
 
     # Create A matrices for different values of k
-    k_minits = (1,2)
-    run_range_2k(df, k_minits)
+    k_limits = (1,2)
+    run_range_2k(df, k_limits)
 
 
 main()
