@@ -42,7 +42,7 @@ def get_equations():
         [A11eq_v1, A11eq_A11, A11eq_A12, A11eq_A22, 1],
         [A12eq_v1, A12eq_A11, A12eq_A12, A12eq_A22, 1],
         [A22eq_v1, A22eq_A11, A22eq_A12, A22eq_A22, 1],
-        [v1eq_v1,  v1eq_A11,  v1eq_A12,  v1eq_A22,  1],
+        [v1eq_v1,  v1eq_A11,  v1eq_A12,  v1eq_A22,  1]
     ]
 
 

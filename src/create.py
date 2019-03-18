@@ -1,6 +1,7 @@
 import numpy as np
 
 from scipy.sparse import csr_matrix, identity, vstack, hstack, lil_matrix
+# from src.error import check_matrix_dims
 from src.OB_equations import get_equation_number, get_equations, get_vars, \
                           set_bound_conditions
 
@@ -13,13 +14,17 @@ from src.OB_equations import get_equation_number, get_equations, get_vars, \
 #          in the equations file.
 #
 
-def create_matrix_A(df, k = [1]):
+
+def create_matrix_A(df, k):
     """
     Generalized function to build A matrix from a set of equations and
     attributes supplied from the equatins file. Builds a sparse matrix for
     every equation and combines them all in the order that was given by the
     get_equations and get_vars functions.
     """
+
+    # Perform error checking
+    # check_matrix_dims()
 
     # Initialize variables
     eq_n    = get_equation_number()
@@ -78,6 +83,10 @@ def create_matrix_B(m):
     equation.
     TODO: Run more tests to check the correctness of the B-matrix creation
     """
+
+    # Perform error checking
+    # check_matrix_dims()
+
     # Initialize variables
     eq_n    = get_equation_number()
     def_val = 1
