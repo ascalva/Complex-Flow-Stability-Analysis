@@ -76,61 +76,38 @@ def create_matrix_B(m):
     Construct a sparse matrix for B and apply boundary conditions. This will
     consist of either a zero-matrix or an identity matrix for every matrix
     equation.
-    TODO: STRUCTURE OF B-MATRIX STILL NEEDS TO BE GENERALIZED.
+    TODO: Run more tests to check the correctness of the B-matrix creation
     """
     # Initialize variables
     eq_n    = get_equation_number()
-    eq_mtrx = []
+    def_val = 1
+
+    # Generate default values for diagonal
+    lhs = [def_val] * eq_n
 
     # Create list of equation functions to utilize during matrix calculations.
-    # eqs     = get_equations()
-    #
-    # # Create all the components of the A matrix (in this case, 4 diagonal
-    # # matrices).
-    # for row in range(eq_n):
-    #     mtrx_row = []
-    #
-    #     for col in range(eq_n):
-    #
-    #         # Value across diagonal. If function (equation) gets empty lists,
-    #         # does no computation and returns value on left side of equation.
-    #         diag_val = eqs[row][col]([],[])
-    #
-    #         # Create zero matrix if left side of equation is zero
-    #         if diag_val == 0:
-    #             mtrx_row.append(
-    #                 csr_matrix((m, m), dtype=np.cfloat)
-    #             )
-    #
-    #         # Create identity matrix if left side is nonzero, utilize whatever
-    #         # value has been previously defined.
-    #         else:
-    #             mtrx = identity(m, format='csr', dtype=np.cfloat)
-    #             mtrx.setdiag( [diag_val] * m )
-    #             mtrx_row.append( mtrx )
-    #
-    #     # Add row to eq_mtrx
-    #     eq_mtrx.append( mtrx_row )
+    eqs = np.array(get_equations())
 
-    top = identity((eq_n - 1) * m, format='csr', dtype=np.cfloat)
-    side = csr_matrix(((eq_n - 1) * m, m), dtype=np.cfloat)
-    top = hstack([top, side])
-    tot = vstack([top, csr_matrix((m, eq_n *m), dtype=np.cfloat)])
+    # If there is an extra column (last column) in the equation matrix, utilize
+    # values to form matrix. So if the i-th equation has a 0, then all the
+    # diagonal values for that equation are equal to 0.
+    if (len(eqs.shape) == 2) and (eqs.shape[0] + 1 == eqs.shape[1]):
+        lhs = eqs[:,eq_n]
 
+        if not all(isinstance(elt,int) for elt in lhs):
+            raise ValueError("The last column of the equation matrix must contain only ints..")
 
-    # Apply boundary conditions where the first first element, tc[0,0], is
-    # equal to 0.
-    # set_bound_conditions(eq_mtrx, m, "B")
+    # Initialize B matrix as an identity matrix of type lil, to make sparcity
+    # changes efficient
+    B = identity(eq_n * m, format='lil', dtype=np.cfloat)
 
-    # Stack all matrices to form the A matrix, such that the it retains the
-    # order provided by the equation matrix, eqs.
-    # for row in range(eq_n):
-    #     # Horizontally stack each row
-    #     eq_mtrx[row] = hstack(eq_mtrx[row])
+    # Adopt values from equation matrix along the diagonal
+    for eq in range(len(lhs)):
+        for elt in range(m * eq, m * eq + m):
+            B[elt,elt] = lhs[eq]
 
-    # Vertically stack all rows
-    # return vstack(eq_mtrx)
-    return tot
+    # Return and convert (to csr) B matrix
+    return B.tocsr()
 
 
 def main():

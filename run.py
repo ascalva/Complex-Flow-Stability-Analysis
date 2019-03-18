@@ -18,7 +18,7 @@ def main():
     negate(df)
 
     # Create A matrices for different values of k
-    k_minits = (1,3)
+    k_minits = (1,2)
     run_range_2k(df, k_minits)
 
 
