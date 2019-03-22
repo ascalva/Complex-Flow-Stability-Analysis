@@ -7,12 +7,41 @@
 #          computation exist here.
 #
 
+from src.OB_equations import LAMBDA, H, get_vars
+
 # Define bounding values
-X_MIN = 1.0
-X_MAX = 1.1
-Y_MIN = 1.0
-Y_MAX = 1.1
+X_MIN = 1.0499
+X_MAX = 1.0501
+Y_MIN = 1.0499
+Y_MAX = 1.0501
 Z_VAL = 0.01
+
+COORD = (
+    "Points:0",
+     "Points:1",
+     "Points:2"
+)
+
+
+def update_index(df):
+    """
+    Update the indices of a data frame in place so that indeces are sequential
+    """
+    df.reset_index(drop=True, inplace=True)
+
+
+def deduplicate(df, up_index=False):
+    """
+    Remove rows that share the same coordinates (location), keep the first one
+    found at the specific coordinates.
+    """
+    df.drop_duplicates(
+        subset=COORD,
+        keep='first',
+        inplace=True
+    )
+
+    if up_index: update_index(df)
 
 
 def negate_threshold():
@@ -37,16 +66,47 @@ def negate_attributes():
         "Gradients U:4"   # v_2x_2
     ]
 
-def negate(df):
+def negate(df, up_index=False):
     """
     Negates the values of specific attributes to the right of a threshold.
     """
-    x = "Points:0"
+    x = COORD[0]
     for attr in negate_attributes():
         df.loc[df[x] > negate_threshold(), attr] *= -1
 
+    if up_index: update_index(df)
 
-def bound(df):
+
+def non_dimensionalize_U(df):
+    #TODO: make more dynamic
+    for attr in get_vars()[3:5]:
+        df.loc[:, attr] *= LAMBDA / H
+
+
+def non_dimensionalize_gradU(df):
+    #TODO: make more dynamic
+    for attr in get_vars()[11:]:
+        df.loc[:, attr] *= LAMBDA
+
+
+def non_dimensionalize_gradA(df):
+    #TODO: make more dynamic
+    for attr in get_vars()[5:11]:
+        df.loc[:, attr] *= H
+
+
+def non_dimensionalize(df, up_index=False):
+    """
+    Data imported is dimensionalized, needs to be non-dimensionalized.
+    """
+    non_dimensionalize_U(df)
+    non_dimensionalize_gradU(df)
+    non_dimensionalize_gradA(df)
+
+    if up_index: update_index(df)
+
+
+def bound(df, up_index=False):
     """
     Using the bounding conditions above, filters out data not in that range.
     """
@@ -57,12 +117,14 @@ def bound(df):
     z = "Points:2"
 
     # Bound x-values
-    df = df[(df[x] >= X_MIN) & (df[x] <= X_MAX)]
+    df = df[(df[COORD[0]] >= X_MIN) & (df[COORD[0]] <= X_MAX)]
 
     # Bound y-values
-    df = df[(df[y] >= Y_MIN) & (df[y] <= Y_MAX)]
+    df = df[(df[COORD[1]] >= Y_MIN) & (df[COORD[1]] <= Y_MAX)]
 
     # Bound z-values
-    df = df[df[z] == Z_VAL]
+    df = df[df[COORD[2]] == Z_VAL]
 
-    return df.reset_index(drop=True)
+    if up_index: update_index(df)
+
+    return df

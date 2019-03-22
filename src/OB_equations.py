@@ -12,11 +12,11 @@
 ############################## SIMULATION PARAMS #############################
 ##############################################################################
 
-LAMBDA = 0.1
+LAMBDA = 0.01
 H      = 0.1
 ETA_S  = 0.1111111
 ETA_P  = 0.8888889
-El     = 10e6
+El     = 1e6
 ALPHA  = 0.0
 
 
@@ -111,7 +111,7 @@ def A11eq_v1(prms, k):
     Calculate the v1-component of A_11 equation
     """
     return - prms[5] + (2 * prms[0] * 1j * k[0]) + (2 * prms[1] * 1j * k[1]) \
-           + ((k[1]/k[0]) * prms[6])
+           + ((k[0]/k[1]) * prms[6])
 
 def A11eq_A11(prms, k):
     """
@@ -139,7 +139,7 @@ def A12eq_v1(prms, k):
     Calculate the v1-component of A_12 equation
     """
     return - prms[7] + (prms[1] * 1j * k[0]) + (prms[2] * 1j * k[1]) \
-           + (k[1]/k[0]) * (prms[8] - (prms[0] * 1j * k[0]) - (prms[1] * 1j * k[1]))
+           + (k[0]/k[1]) * (prms[8] - (prms[0] * 1j * k[0]) - (prms[1] * 1j * k[1]))
 
 def A12eq_A11(prms, k):
     """
@@ -167,7 +167,7 @@ def A22eq_v1(prms, k):
     """
     Calculate the v1-component of A_22 equation
     """
-    return (k[1]/k[0]) * (prms[10] - (2 * prms[1] * 1j * k[0]) - (2 * prms[2] * 1j * k[1])) \
+    return (k[0]/k[1]) * (prms[10] - (2 * prms[1] * 1j * k[0]) - (2 * prms[2] * 1j * k[1])) \
            - prms[9]
 
 def A22eq_A11(prms, k):
