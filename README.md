@@ -1,5 +1,5 @@
 # Capstone 2 Code #
-### Alberto Serrano ###
+#### author: Alberto Serrano ####
 
 ## Description ##
 + Clean and filter simulation data from either a bend- or crosslot-flow generated from OpenFOAM simulations.
