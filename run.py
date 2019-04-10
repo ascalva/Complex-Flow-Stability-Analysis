@@ -2,6 +2,8 @@ import pandas as pd
 import argparse
 from src.preprocess import bound, negate, non_dimensionalize, deduplicate
 from src.routines import run_range_2k
+from src.create import create_matrix_A_new
+from src.eigs import save_matrix_to_ml
 
 def main2():
     from src.parameters import FILENAME, change_filename
@@ -10,11 +12,11 @@ def main2():
 
     from src.parameters import FILENAME
     print(FILENAME)
-    
+
 def main():
     # Default values
     filename = "data/OB_crossslot_symmetric_De0.36.csv"
-    k_limits = (1,3)
+    k_limits = (1,2)
 
     # Create argument parser
     ap = argparse.ArgumentParser(description="Create sparse matrix from data and more")
@@ -60,9 +62,15 @@ def main():
     # Remove duplicate values, typically occur on the line of symmetry
     # Updates indices
     deduplicate(df, up_index=True)
+    # print(df[(df["Points:0"] == 1.0) & (df["Points:1"] == 1.0)].index.values[0])
 
     # Create A matrices for different values of k
-    run_range_2k(df, args["krange"])
+    # run_range_2k(df, args["krange"])
+
+    # Run with neighbor implementation
+    A = create_matrix_A_new(df)
+
+    save_matrix_to_ml(A, [], "test")
 
 
 main()

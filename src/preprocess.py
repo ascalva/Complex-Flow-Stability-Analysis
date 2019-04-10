@@ -7,13 +7,13 @@
 #          computation exist here.
 #
 
-from src.OB_equations import LAMBDA, H, get_vars
+from src.OB_equations2 import LAMBDA, H, get_vars
 
 # Define bounding values
-X_MIN = 1.0499
-X_MAX = 1.0501
-Y_MIN = 1.0499
-Y_MAX = 1.0501
+X_MIN = 1.02#0.95
+X_MAX = 1.08#1.15
+Y_MIN = 1.02#0.95
+Y_MAX = 1.08#1.15
 Z_VAL = 0.01
 
 COORD = (

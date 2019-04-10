@@ -45,6 +45,25 @@ def get_equations():
         [v1eq_v1,  v1eq_A11,  v1eq_A12,  v1eq_A22,  1]
     ]
 
+def get_equation_names():
+    return [
+        "A11",
+        "A12",
+        "A22",
+        "x1",
+        "x2",
+        "m"
+    ]
+
+def get_component_names():
+    return [
+        "p",
+        "v1",
+        "v2",
+        "A11",
+        "A12",
+        "A22"
+    ]
 
 def get_vars():
     """
