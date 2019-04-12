@@ -68,9 +68,9 @@ def main():
     # run_range_2k(df, args["krange"])
 
     # Run with neighbor implementation
-    A = create_matrix_A_new(df)
+    A,B_ = create_matrix_A_new(df)
 
-    save_matrix_to_ml(A, [], "test")
+    save_matrix_to_ml(A,B_, "test")
 
 
 main()
