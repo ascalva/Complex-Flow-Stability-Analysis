@@ -1,10 +1,6 @@
 import numpy as np
-# import importlib
 
 from scipy.sparse import csr_matrix, identity, vstack, hstack, lil_matrix
-# from src.error import check_matrix_dims
-# from src.OB_equations import get_equation_number, get_equations, get_vars, \
-#                           set_bound_conditions
 
 import src.OB_equations2 as eqF
 import src.boundary_conditions as BC
@@ -110,14 +106,14 @@ def get_neighbor_ind(df, indx):
 
 
 def get_func_name(eq_name, var_name, description):
-    return "{0}_{1}_{2}".format(str(eq_name), str(var_name), description)
+    return "{0}_{1}_{2}".format(eq_name, var_name, description)
 
 
 def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name):
     bound     = get_func_name(eq_name, var_name, BOUND_NAME)
     curr_indx = neighbors[0]
 
-    if hasattr(BC, bound) and curr_indx != -1:
+    if hasattr(BC, bound): #and curr_indx != -1:
         mtrx[curr_indx,curr_indx] = getattr(BC, bound)([])
 
 
@@ -141,7 +137,7 @@ def evaluate_point(df, neighbors, mtrx, eq_name, var_name):
         func_name = get_func_name(eq_name, var_name, NEIGHBOR_LOC[neigh])
 
         # Check if function with calculated name exists
-        if hasattr(eqF, func_name) and neighbors[neigh] != -1:
+        if hasattr(eqF, func_name): #and neighbors[neigh] != -1:
 
             # Evaluate matrix at location with found function
             df_indx                 = neighbors[neigh]
