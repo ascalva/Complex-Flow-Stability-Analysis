@@ -18,8 +18,12 @@ import src.boundary_conditions as BC
 #          in the equations file.
 #
 
-NEIGHBOR_NUM = 5
-NEIGHBOR_LOC = ["cen", "up", "down", "left", "right"]
+NEIGHBOR_NUM  = 5
+NEIGHBOR_LOC  = ["cen", "up", "down", "left", "right"]
+BOUND_NAME    = "bound"
+LOAD_INTERVAL = 100
+DX            = eqF.DX
+DY            = eqF.DY
 
 def create_matrix_A(df, k):
     """
@@ -83,38 +87,34 @@ def create_matrix_A(df, k):
 
 
 def get_neighbor_ind(df, indx):
-    DX = 0.002
-    DY = 0.002
-
 
     X_LAB = "Points:0"
     Y_LAB = "Points:1"
-    BOUND = False
+    bound = False
 
     curr  = df.loc[indx]
     x     = curr[X_LAB]
     y     = curr[Y_LAB]
 
-    # cen   = df[(df[X_LAB] == x)      & (df[Y_LAB] == y     )].index.values
     up    = df[(df[X_LAB] == x)      & (df[Y_LAB] == y - DY)].index.values
     down  = df[(df[X_LAB] == x)      & (df[Y_LAB] == y + DY)].index.values
     left  = df[(df[X_LAB] == x - DX) & (df[Y_LAB] == y)     ].index.values
     right = df[(df[X_LAB] == x + DX) & (df[Y_LAB] == y)     ].index.values
 
-    if len(up)    == 0: up    = [-1]; BOUND = True
-    if len(down)  == 0: down  = [-1]; BOUND = True
-    if len(left)  == 0: left  = [-1]; BOUND = True
-    if len(right) == 0: right = [-1]; BOUND = True
+    if len(up)    == 0: up    = [-1]; bound = True
+    if len(down)  == 0: down  = [-1]; bound = True
+    if len(left)  == 0: left  = [-1]; bound = True
+    if len(right) == 0: right = [-1]; bound = True
 
-    return (indx, *up, *down, *left, *right), BOUND
+    return (indx, *up, *down, *left, *right), bound
+
 
 def get_func_name(eq_name, var_name, description):
-    # return str(eq_name) + "_" + str(var_name) + "_cen"
     return "{0}_{1}_{2}".format(str(eq_name), str(var_name), description)
 
 
 def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name):
-    bound     = get_func_name(eq_name, var_name, "bound")
+    bound     = get_func_name(eq_name, var_name, BOUND_NAME)
     curr_indx = neighbors[0]
 
     if hasattr(BC, bound) and curr_indx != -1:
@@ -126,7 +126,7 @@ def boundary_condition_B(df, neighbors, mtrx):
     mtrx[indx,indx] = 0
 
 
-def function_caller(df, neighbors, mtrx, eq_name, var_name):
+def evaluate_point(df, neighbors, mtrx, eq_name, var_name):
 
     # Get attribute names
     attributes = eqF.get_vars()
@@ -174,17 +174,13 @@ def create_matrix_A_new(df):
     # row is zero at a boundary
     B_ = identity(m, format='lil', dtype=np.cfloat)
 
-
-    # Create list of equation functions to utilize during matrix calculations.
-    # eqs = eqF.get_equations()
-
     eq_names  = eqF.get_equation_names()
     var_names = eqF.get_component_names()
 
     # Populate all matrices along their diagonal
     for indx, row in df.iterrows():
 
-        if indx % 100 == 0:
+        if indx % LOAD_INTERVAL == 0:
             print("{0:.1f}% complete..".format(indx * 100 / df.shape[0]))
 
         # Get indices of neighboring points
@@ -198,13 +194,16 @@ def create_matrix_A_new(df):
         for r_indx in range(eq_n):
             for c_indx in range(eq_n):
 
+                # Get current values (matrix and names of eq and var)
                 curr_eq_mtrx  = eq_mtrx[r_indx][c_indx]
                 curr_eq_name  = eq_names[r_indx]
                 curr_var_name = var_names[c_indx]
 
+                # Evaluate point if not at a wall
                 if not bound:
-                    function_caller(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name)
+                    evaluate_point(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name)
 
+                # Evaluate point if at a wall
                 else:
                     boundary_condition_A(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name)
 
