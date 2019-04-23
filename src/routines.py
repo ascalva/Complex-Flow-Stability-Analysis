@@ -1,5 +1,5 @@
-from src.create import create_matrix_A, create_matrix_B
-from src.eigs import remove_inf_eigs, save_matrix_to_ml
+from .create import create_matrix_A, create_matrix_B
+from .eigs import remove_inf_eigs, save_matrix_to_ml
 
 #
 # filename: routines.py

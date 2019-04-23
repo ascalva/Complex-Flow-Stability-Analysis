@@ -1,9 +1,12 @@
 import numpy as np
+import sys
 
 from scipy.sparse import csr_matrix, identity, vstack, hstack, lil_matrix
 
-import src.OB_equations2 as eqF
-import src.boundary_conditions as BC
+sys.path.append(".")
+
+from . import OB_equations2 as eqF
+from . import boundary_conditions as BC
 
 #
 # filename: create.py
