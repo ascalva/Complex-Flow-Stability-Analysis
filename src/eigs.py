@@ -12,15 +12,15 @@ from scipy.sparse import csr_matrix, identity, vstack, hstack, issparse
 #          matrices.
 #
 
-def save_matrix_to_ml(F, G_B, filename = "sparse_matrices"):
-    """
-    Saves F and G_B matrices to matlab file for later eigenvalue computation.
-    The sparse form of the matries is preserved to keep the data memory
-    efficient.
-    """
-    from scipy.io import savemat
-
-    savemat(filename, {"G_B": G_B, "F": F})
+# def save_matrix_to_ml(F, G_B, filename = "sparse_matrices"):
+#     """
+#     Saves F and G_B matrices to matlab file for later eigenvalue computation.
+#     The sparse form of the matries is preserved to keep the data memory
+#     efficient.
+#     """
+#     from scipy.io import savemat
+#
+#     savemat(filename, {"G_B": G_B, "F": F})
 
 
 def create_permutation_matrix(B, shift_up):
