@@ -1,17 +1,8 @@
 import pandas as pd
 import argparse
 from src.preprocess import bound, negate, non_dimensionalize, deduplicate
-from src.routines import run_range_2k
-from src.create import create_matrix_A_new
+from src.create import build_coefficient_matrix
 from src.eigs import save_matrix_to_ml
-
-def main2():
-    from src.parameters import FILENAME, change_filename
-    print(FILENAME)
-    change_filename("hello")
-
-    from src.parameters import FILENAME
-    print(FILENAME)
 
 def main():
     # Default values
@@ -68,7 +59,7 @@ def main():
     # run_range_2k(df, args["krange"])
 
     # Run with neighbor implementation
-    A,B_ = create_matrix_A_new(df)
+    A,B_ = build_coefficient_matrix(df)
 
     save_matrix_to_ml(A,B_, "test")
 

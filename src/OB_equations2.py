@@ -32,21 +32,6 @@ def get_equation_number():
     """
     return 6
 
-
-# def get_equations():
-#     """
-#     Return the equations used for calculating the matrices. The order and
-#     position of the equations is important. The placement of each equation
-#     will determine the placement of the matrix for that equation along the
-#     A matrix.
-#     """
-#     return [
-#         [A11eq_v1, A11eq_A11, A11eq_A12, A11eq_A22, 1],
-#         [A12eq_v1, A12eq_A11, A12eq_A12, A12eq_A22, 1],
-#         [A22eq_v1, A22eq_A11, A22eq_A12, A22eq_A22, 1],
-#         [v1eq_v1,  v1eq_A11,  v1eq_A12,  v1eq_A22,  1]
-#     ]
-
 def get_equation_names():
     return [
         "A11",
@@ -117,16 +102,6 @@ def set_bound_conditions(eq_mtrx, m, m_type):
 ############################# Recurring Expressions ##########################
 def Beta():
     return ETA_S / (ETA_S + ETA_P)
-
-def vnkn(prms, k):
-    return (prms[3] * 1j * k[0]) + (prms[4] * 1j * k[1])
-
-def sum_k(k):
-    """
-    Compute the sum of squares of k's.
-    """
-    return (k[0] ** 2) + (k[1] ** 2)
-
 
 def dx():
     return 1 / (2 * DX)
