@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-# DF_NAME = "processed_data"
 INT_PATH = "intermediate_data/"
 
 def save_matrix_to_ml(F, G_B, filename = "sparse_matrices"):
@@ -16,6 +15,11 @@ def save_matrix_to_ml(F, G_B, filename = "sparse_matrices"):
 
 
 def check_dataframe(filename):
+    """
+    Checks if there exists a pickle file with the given file name within the
+    intermediate_data directory.
+    Returns True if the file exists, False otherwise.
+    """
     from os.path import isfile
 
     if isfile( INT_PATH + filename ):
@@ -25,9 +29,15 @@ def check_dataframe(filename):
 
 
 def save_dataframe(df, filename):
+    """
+    Serialize the given dataframe and save for later.
+    """
     df.to_pickle(INT_PATH + filename)
 
 
 def read_dataframe(filename):
-
+    """
+    Read in dataframe from a pickle file with the name supplied. It is assumed
+    that the file exists.
+    """
     return pd.read_pickle(INT_PATH + filename)

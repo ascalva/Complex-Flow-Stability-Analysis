@@ -20,25 +20,41 @@ from . import boundary_conditions as BC
 NEIGHBOR_NUM  = 5
 NEIGHBOR_LOC  = ["cen", "up", "down", "left", "right"]
 BOUND_NAME    = "bound"
+X_LAB         = eqF.COORD[0]
+Y_LAB         = eqF.COORD[1]
 LOAD_INTERVAL = 100
 DX            = eqF.DX
 DY            = eqF.DY
 
-def get_neighbor_ind(df, indx):
 
-    X_LAB = "Points:0"
-    Y_LAB = "Points:1"
+def get_neighbor_ind(df, indx):
+    """
+    Returns the dataframe indices of the neighbors at a specified point. If a
+    neighbor does not exist, it is assumed that the center point is along a
+    boundary. The neighbor is given a index of -1.
+
+    Index return: [center, up, down, left, right]
+    If boolean 'bound' is true, the center point lies along a boundary, false
+    otherwise.
+    """
+
+    # Initialize boundary bool
     bound = False
 
+    # Get center location
     curr  = df.loc[indx]
     x     = curr[X_LAB]
     y     = curr[Y_LAB]
 
+    # Find neighbor indices, will return a list with one element since
+    # all points are unique (deduplicated during preprocess).
     up    = df[(df[X_LAB] == x)      & (df[Y_LAB] == y - DY)].index.values
     down  = df[(df[X_LAB] == x)      & (df[Y_LAB] == y + DY)].index.values
     left  = df[(df[X_LAB] == x - DX) & (df[Y_LAB] == y)     ].index.values
     right = df[(df[X_LAB] == x + DX) & (df[Y_LAB] == y)     ].index.values
 
+    # If a list is empty, assign the neighbor an index of -1 and mark the point
+    # as a boundary.
     if len(up)    == 0: up    = [-1]; bound = True
     if len(down)  == 0: down  = [-1]; bound = True
     if len(left)  == 0: left  = [-1]; bound = True
@@ -48,10 +64,17 @@ def get_neighbor_ind(df, indx):
 
 
 def get_func_name(eq_name, var_name, description):
+    """
+    Return a formatted string that represents the name of the function that
+    should be used at a point based on the current equation and variable.
+    """
     return "{0}_{1}_{2}".format(eq_name, var_name, description)
 
 
 def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name):
+    """
+    If a point resides at a boundary, evaluate it properly for the A matrix
+    """
     bound     = get_func_name(eq_name, var_name, BOUND_NAME)
     curr_indx = neighbors[0]
 
@@ -60,11 +83,22 @@ def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name):
 
 
 def boundary_condition_B(df, neighbors, mtrx):
+    """
+    If a point resides at a boundary, evaluate it properly for the B matrix
+    """
     indx            = neighbors[0]
     mtrx[indx,indx] = 0
 
 
 def evaluate_point(df, neighbors, mtrx, eq_name, var_name):
+    """
+    Evaluate a point in the B matrix that does not reside along a boundary.
+    Calls on the appropriate function name within the equations file.
+    If the function is not predefined, then the expression at the point is
+    evaluated as 0.
+    If the function does exist, evaluate the point using the existing
+    expression.
+    """
 
     # Get attribute names
     attributes = eqF.get_vars()
@@ -89,6 +123,11 @@ def evaluate_point(df, neighbors, mtrx, eq_name, var_name):
 
 
 def build_coefficient_matrix(df):
+    """
+    Builds the coefficient matrix B and applies boundary conditions to the
+    A matrix. Utilizes the equations file to achieve this.
+    """
+
     # Initialize variables
     eq_n    = eqF.get_equation_number()
     m,_     = df.shape
@@ -154,109 +193,6 @@ def build_coefficient_matrix(df):
 
     # Vertically stack all rows
     return vstack(eq_mtrx).tocsr(), B_.tocsr()
-
-# def create_matrix_A(df, k):
-#     """
-#     Generalized function to build A matrix from a set of equations and
-#     attributes supplied from the equatins file. Builds a sparse matrix for
-#     every equation and combines them all in the order that was given by the
-#     get_equations and get_vars functions.
-#     """
-#
-#     # Perform error checking
-#     # check_matrix_dims()
-#
-#     # Initialize variables
-#     eq_n    = eqF.get_equation_number()
-#     m,_     = df.shape
-#     eq_mtrx = []
-#
-#     # Create all the components of the A matrix (in this case, 4 diagonal
-#     # matrices).
-#     for row in range(eq_n):
-#         mtrx_row = []
-#
-#         for col in range(eq_n):
-#             # Populate row of matrices
-#             mtrx_row.append(
-#                 lil_matrix((m, m), dtype=np.cfloat)
-#             )
-#
-#         # Add row to eq_mtrx
-#         eq_mtrx.append( mtrx_row )
-#
-#     # Create list of equation functions to utilize during matrix calculations.
-#     eqs = eqF.get_equations()
-#
-#     # Data used from data frame
-#     attributes = eqF.get_vars()
-#
-#     # Populate all matrices along their diagonal
-#     for indx, row in df.iterrows():
-#
-#         # Obtain variables
-#         variables = [row[attr] for attr in attributes]
-#
-#         # At a specific location, calculate the value for each matrix with
-#         # its respective equation.
-#         for r_indx in range(eq_n):
-#             for c_indx in range(eq_n):
-#                 eq_mtrx[r_indx][c_indx][indx, indx] = eqs[r_indx][c_indx](variables, k)
-#
-#     # Set boundary conditions in certain matrix equations
-#     eqF.set_bound_conditions(eq_mtrx, m, "A")
-#
-#     # Stack all matrices to form the A matrix, such that the it retains the
-#     # order provided by the equation matrix, eqs.
-#     for row in range(eq_n):
-#         # Horizontally stack each row
-#         eq_mtrx[row] = hstack(eq_mtrx[row])
-#
-#     # Vertically stack all rows
-#     return vstack(eq_mtrx).tocsr()
-#
-#
-# def create_matrix_B(m):
-#     """
-#     Construct a sparse matrix for B and apply boundary conditions. This will
-#     consist of either a zero-matrix or an identity matrix for every matrix
-#     equation.
-#     TODO: Run more tests to check the correctness of the B-matrix creation
-#     """
-#
-#     # Perform error checking
-#     # check_matrix_dims()
-#
-#     # Initialize variables
-#     eq_n    = eqF.get_equation_number()
-#     def_val = 1
-#
-#     # Generate default values for diagonal
-#     lhs = [def_val] * eq_n
-#
-#     # Create list of equation functions to utilize during matrix calculations.
-#     eqs = np.array(eqF.get_equations())
-#
-#     # If there is an extra column (last column) in the equation matrix, utilize
-#     # values to form matrix. So if the i-th equation has a 0, then all the
-#     # diagonal values for that equation are equal to 0.
-#     if (len(eqs.shape) == 2) and (eqs.shape[0] + 1 == eqs.shape[1]):
-#         lhs = eqs[:,eq_n]
-#
-#         if not all(isinstance(elt,int) for elt in lhs):
-#             raise ValueError("The last column of the equation matrix must contain only ints..")
-#
-#     # Initialize B matrix as an identity matrix of type lil, to make sparcity
-#     # changes efficient
-#     B = identity(eq_n * m, format='lil', dtype=np.cfloat)
-#
-#     # Adopt values from equation matrix along the diagonal
-#     for eq in range(len(lhs)):
-#         for elt in range(m * eq, m * eq + m):
-#             B[elt,elt] = lhs[eq]
-#
-#     # Return and convert (to csr) B matrix
-#     return B.tocsr()
 
 
 def test_neighbor_function():
