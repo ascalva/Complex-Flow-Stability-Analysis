@@ -23,6 +23,9 @@ def init(args):
     no file, read in the csv file and preprocess the data. Save the preprocessed
     data into a pickle file for later use.
     """
+
+    # Extract the filename of the csv file from the path and remove the file
+    # extension.
     filename = "".join(args["file"].split("/")[-1].split(".")[:-1])
 
     # Check if preprocessed data frame exists in intermediate_data directory
@@ -61,15 +64,17 @@ def init(args):
 
 
 def coefficient_matrix_setup(df):
-
+    """
+    Build the coefficient matrices and save for later use.
+    """
     # Run with neighbor implementation
-    A,B_ = build_coefficient_matrix(df)
+    A, B   = build_coefficient_matrix(df)
 
     # Remove infinite eigenvalues
-    # F, G_B = remove_inf_eigs(A, B)
+    F, G_B = remove_inf_eigs(A, B)
 
     # Save coefficient matrices
-    save_matrix_to_ml(A,B_, MTLB_FILENAME)
+    save_matrix_to_ml(F, G_B, MTLB_FILENAME)
 
 
 def main():

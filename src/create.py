@@ -22,9 +22,46 @@ NEIGHBOR_LOC  = ["cen", "up", "down", "left", "right"]
 BOUND_NAME    = "bound"
 X_LAB         = eqF.COORD[0]
 Y_LAB         = eqF.COORD[1]
-LOAD_INTERVAL = 100
+LOAD_INTERVAL = 500
 DX            = eqF.DX
 DY            = eqF.DY
+
+def init_matrix(m, eq_n):
+    """
+    Create all the components of a matrix such that there will be eq_n x eq_n
+    number of sub matrices in a 2D array.
+    """
+    eq_mtrx = []
+
+    # Populate array with arrays of sparse matrices
+    for row in range(eq_n):
+        mtrx_row = []
+
+        for col in range(eq_n):
+            # Populate row of matrices
+            mtrx_row.append(
+                lil_matrix((m, m), dtype=np.cfloat)
+            )
+
+        # Add row to eq_mtrx
+        eq_mtrx.append( mtrx_row )
+
+    return eq_mtrx
+
+
+def stitch_matrix(mtrx, eq_n):
+    """
+    Stack all matrices to form a single sparse matrix such that the it retains
+    the order provided by the equation matrix. Stacks all components in a row
+    into one matrix, then stacks all rows into a single matrix of size.
+    """
+
+    # Horizontally stack each row
+    for row in range(eq_n):
+        mtrx[row] = hstack(mtrx[row])
+
+    # Vertically stack all rows
+    return vstack(mtrx).tocsr()
 
 
 def get_neighbor_ind(df, indx):
@@ -122,6 +159,22 @@ def evaluate_point(df, neighbors, mtrx, eq_name, var_name):
             mtrx[curr_indx,df_indx] = getattr(eqF, func_name)(variables)
 
 
+def build_B(B_, eq_names, var_names, m, eq_n):
+    """
+    Use the sub matrix B_ to create the B matrix of size (m * eq_n) x (m * eq_n)
+    and paste the contents of B_ along the diagonal. Assumes that the order of
+    the variables and equations is the same.
+
+    Current implementation skips the last equation-component pair.
+    """
+    B_mtrx = init_matrix(m, eq_n)
+
+    for eq_var_pair in range(eq_n - 1):
+        B_mtrx[eq_var_pair][eq_var_pair] = B_
+
+    return B_mtrx
+
+
 def build_coefficient_matrix(df):
     """
     Builds the coefficient matrix B and applies boundary conditions to the
@@ -131,21 +184,7 @@ def build_coefficient_matrix(df):
     # Initialize variables
     eq_n    = eqF.get_equation_number()
     m,_     = df.shape
-    eq_mtrx = []
-
-    # Create all the components of the A matrix (in this case, 4 diagonal
-    # matrices).
-    for row in range(eq_n):
-        mtrx_row = []
-
-        for col in range(eq_n):
-            # Populate row of matrices
-            mtrx_row.append(
-                lil_matrix((m, m), dtype=np.cfloat)
-            )
-
-        # Add row to eq_mtrx
-        eq_mtrx.append( mtrx_row )
+    eq_mtrx = init_matrix(m, eq_n)
 
     # Create top left matrix (mxm) of B matrix, will be an identity where the
     # row is zero at a boundary
@@ -184,15 +223,14 @@ def build_coefficient_matrix(df):
                 else:
                     boundary_condition_A(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name)
 
+    # Finalize A matrix
+    A_mtrx = stitch_matrix( eq_mtrx, eq_n )
 
-    # Stack all matrices to form the A matrix, such that the it retains the
-    # order provided by the equation matrix, eqs.
-    for row in range(eq_n):
-        # Horizontally stack each row
-        eq_mtrx[row] = hstack(eq_mtrx[row])
+    # Build and finalize B matrix
+    B_mtrx = stitch_matrix( build_B(B_, eq_names, var_names, m, eq_n), eq_n )
 
-    # Vertically stack all rows
-    return vstack(eq_mtrx).tocsr(), B_.tocsr()
+    return A_mtrx, B_mtrx
+
 
 
 def test_neighbor_function():

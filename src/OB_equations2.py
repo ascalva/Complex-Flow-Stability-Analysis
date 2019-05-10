@@ -48,14 +48,24 @@ def get_equation_names():
         "m"
     ]
 
+# def get_component_names():
+#     return [
+#         "p",
+#         "v1",
+#         "v2",
+#         "A11",
+#         "A12",
+#         "A22"
+#     ]
+
 def get_component_names():
     return [
-        "p",
-        "v1",
-        "v2",
         "A11",
         "A12",
-        "A22"
+        "A22",
+        "v1",
+        "v2",
+        "p"
     ]
 
 def get_vars():
