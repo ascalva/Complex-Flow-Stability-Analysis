@@ -1,6 +1,6 @@
 import numpy as np
-import pandas as pd
-from scipy.sparse import csr_matrix, identity, vstack, hstack, issparse
+
+from scipy.sparse import csr_matrix, identity, vstack, issparse
 
 #
 # filename: eigs.py
@@ -18,7 +18,7 @@ def create_permutation_matrix(B, shift_up):
     permutations of the B matrix (want to move all zero-rows to the bottom
     of the matrix).
     """
-    
+
     # Check if supplied matrix is sparse, if not, make it so.
     if not issparse(B):
         B = csr_matrix(B)
