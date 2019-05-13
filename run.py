@@ -97,7 +97,7 @@ def main():
     # Load data frame
     df = init(args)
 
-    # Setup coefficient matrices and save
+    # Setup coefficient matrices and save.
     coefficient_matrix_setup(df)
 
 
