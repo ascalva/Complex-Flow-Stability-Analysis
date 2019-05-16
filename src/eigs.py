@@ -20,8 +20,8 @@ def create_permutation_matrix(B, shift_up):
     """
 
     # Check if supplied matrix is sparse, if not, make it so.
-    if not issparse(B):
-        B = csr_matrix(B)
+    # if not issparse(B):
+    #     B = csr_matrix(B)
 
     # Permutation matrix is initialized as an identity matrix.
     # A lil_matrix is used for its flexible indexing

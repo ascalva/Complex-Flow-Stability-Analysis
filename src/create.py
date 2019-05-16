@@ -20,6 +20,7 @@ BOUND_NAME    = "bound"
 X_LAB         = eqF.COORD[0]
 Y_LAB         = eqF.COORD[1]
 LOAD_INTERVAL = 500
+COORD_TOL     = 0.001
 DX            = eqF.DX
 DY            = eqF.DY
 
@@ -82,20 +83,87 @@ def get_neighbor_ind(df, indx):
 
     # Find neighbor indices, will return a list with one element since
     # all points are unique (deduplicated during preprocess).
-    up    = df[(df[X_LAB] == x)      & (df[Y_LAB] == y - DY)].index.values
-    down  = df[(df[X_LAB] == x)      & (df[Y_LAB] == y + DY)].index.values
-    left  = df[(df[X_LAB] == x - DX) & (df[Y_LAB] == y)     ].index.values
-    right = df[(df[X_LAB] == x + DX) & (df[Y_LAB] == y)     ].index.values
+    up    = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y - DY) ].index.values
+    down  = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y + DY) ].index.values
+    left  = df[ (df[X_LAB] == x - DX) & (df[Y_LAB] == y)      ].index.values
+    right = df[ (df[X_LAB] == x + DX) & (df[Y_LAB] == y)      ].index.values
 
     # If a list is empty, assign the neighbor an index of -1 and mark the point
     # as a boundary.
-    if len(up)    == 0: up    = [-1]; bound = True
-    if len(down)  == 0: down  = [-1]; bound = True
-    if len(left)  == 0: left  = [-1]; bound = True
-    if len(right) == 0: right = [-1]; bound = True
+    if len(up)    == 0:
+        up1 = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y - DY + COORD_TOL) ].index.values
+        if len(up1) != 0:
+            up = up1
+
+        up2 = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y - DY - COORD_TOL) ].index.values
+        if len(up2) != 0:
+            up = up2
+
+        if len(up) == 0:
+            up    = [-1];
+            bound = True
+
+    if len(down)  == 0:
+        down1 = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y + DY + COORD_TOL) ].index.values
+        if len(down1) != 0:
+            down = down1
+            # print("hmm1")
+
+        down2 = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y + DY - COORD_TOL) ].index.values
+        if len(down2) != 0:
+            down = down2
+            # print("hmm2")
+
+        if len(down) == 0:
+            down  = [-1];
+            bound = True
+
+    if len(left)  == 0:
+        left1  = df[ (df[X_LAB] == x - DX + COORD_TOL) & (df[Y_LAB] == y)      ].index.values
+        if len(left1) != 0:
+            left = left1
+
+        left2  = df[ (df[X_LAB] == x - DX - COORD_TOL) & (df[Y_LAB] == y)      ].index.values
+        if len(left2) != 0:
+            left = left2
+
+        if len(left) == 0:
+            left  = [-1]
+            bound = True
+
+    if len(right) == 0:
+        right1 = df[ (df[X_LAB] == x + DX + COORD_TOL) & (df[Y_LAB] == y)      ].index.values
+        if len(right1) != 0:
+            right = right1
+
+        right2 = df[ (df[X_LAB] == x + DX - COORD_TOL) & (df[Y_LAB] == y)      ].index.values
+        if len(right2) != 0:
+            right = right2
+
+        if len(right) == 0:
+            right = [-1]
+            bound = True
+
 
     return (indx, *up, *down, *left, *right), bound
 
+def get_neighbor_ind_new(df, indx):
+    tol = 0.003
+
+    # Initialize boundary bool
+    bound = False
+
+    # Get center location
+    curr  = df.loc[indx]
+    x     = curr[X_LAB]
+    y     = curr[Y_LAB]
+
+    approx = df["Points:1"].apply(np.isclose, b=y, atol=tol)
+    res    = df[df["Points:1"]==approx][df["Points:0"]==x]
+
+    # up    = df[df[Y_LAB] == df[Y_LAB].apply(np.isclose, b=y, atol=tol)][df[X_LAB] == x].index.values
+    up    = df[df[X_LAB] == df[Y_LAB].apply(np.isclose, b=y, atol=tol)][df[X_LAB] == x].index.values
+    # up    = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y - DY) ].index.values
 
 def get_func_name(eq_name, var_name, description):
     """
@@ -114,6 +182,8 @@ def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name):
 
     if hasattr(BC, bound): #and curr_indx != -1:
         mtrx[curr_indx,curr_indx] = getattr(BC, bound)([])
+
+        df.loc[curr_indx, "Boundary"] = 2
 
 
 def boundary_condition_B(df, neighbors, mtrx):
@@ -148,12 +218,16 @@ def evaluate_point(df, neighbors, mtrx, eq_name, var_name):
 
         # Check if function with calculated name exists
         if hasattr(eqF, func_name): #and neighbors[neigh] != -1:
+            # df.loc[curr_indx, "Boundary"] = 3
 
             # Evaluate matrix at location with found function
             df_indx                 = neighbors[neigh]
             df_row                  = df.loc[df_indx]
             variables               = [df_row[attr] for attr in attributes]
             mtrx[curr_indx,df_indx] = getattr(eqF, func_name)(variables)
+
+        # else:
+        #     df.loc[curr_indx, "Boundary"] = 4
 
 
 def build_B(B_, eq_names, var_names, m, eq_n):
@@ -164,10 +238,14 @@ def build_B(B_, eq_names, var_names, m, eq_n):
 
     Current implementation skips the last equation-component pair.
     """
-    B_mtrx = init_matrix(m, eq_n)
+    B_mtrx   = init_matrix(m, eq_n)
+    s_factor = 1e-4
 
+    # Pairs up all equations and components
     for eq_var_pair in range(eq_n - 1):
         B_mtrx[eq_var_pair][eq_var_pair] = B_
+
+    B_mtrx[eq_n - 1][eq_n - 1] = B_ * s_factor
 
     return B_mtrx
 
@@ -190,17 +268,21 @@ def build_coefficient_matrix(df):
     eq_names  = eqF.get_equation_names()
     var_names = eqF.get_component_names()
 
+    # bound_point = 0
+    # non_bound_point = 0
     # Populate all matrices along their diagonal
     for indx, row in df.iterrows():
 
         if indx % LOAD_INTERVAL == 0:
             print("{0:.1f}% complete..".format(indx * 100 / df.shape[0]))
+            # print(bound_point, non_bound_point)
 
         # Get indices of neighboring points
         neighbors, bound = get_neighbor_ind(df, indx)
 
         # Bound B if at a boundary
-        if bound: boundary_condition_B(df, neighbors, B_)
+        if bound: boundary_condition_B(df, neighbors, B_)#;bound_point+=1
+        # else: non_bound_point+=1
 
         # At a specific location, calculate the value for each matrix with
         # its respective equation.
@@ -220,6 +302,7 @@ def build_coefficient_matrix(df):
                 else:
                     boundary_condition_A(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name)
 
+
     # Finalize A matrix
     A_mtrx = stitch_matrix( eq_mtrx, eq_n )
 
@@ -227,7 +310,6 @@ def build_coefficient_matrix(df):
     B_mtrx = stitch_matrix( build_B(B_, eq_names, var_names, m, eq_n), eq_n )
 
     return A_mtrx, B_mtrx
-
 
 
 def test_neighbor_function():

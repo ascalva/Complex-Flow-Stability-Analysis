@@ -29,7 +29,8 @@ def init(args):
     filename = "".join(args["file"].split("/")[-1].split(".")[:-1])
 
     # Check if preprocessed data frame exists in intermediate_data directory
-    if check_dataframe(filename):
+    if check_dataframe(filename) and not args["ignore_pickle"]:
+
         print("Loading preexisting pickle file: {0}".format(filename))
 
         df = read_dataframe(filename)
@@ -57,6 +58,11 @@ def init(args):
         # Updates indices
         deduplicate(df, up_index=True)
 
+        df["Boundary"] = [1] * df.shape[0]
+
+        df["Points:0"] = df["Points:0"].round(3)
+        df["Points:1"] = df["Points:1"].round(3)
+
         # Save dataframe for later use
         save_dataframe(df, filename)
 
@@ -69,6 +75,12 @@ def coefficient_matrix_setup(df):
     """
     # Run with neighbor implementation
     A, B   = build_coefficient_matrix(df)
+
+    import matplotlib.pyplot as plt
+
+    plt.scatter(df["Points:0"], df["Points:1"], c=df["Boundary"], s=7)
+    plt.savefig("cross_bounds.png", dpi=150)
+    plt.show()
 
     # Remove infinite eigenvalues
     F, G_B = remove_inf_eigs(A, B)
@@ -89,6 +101,20 @@ def main():
         type=str,
         help="Name csv file",
         default=DATA_FILENAME
+    )
+
+    ap.add_argument(
+        "-v",
+        "--verbose",
+        help="increase output verbosity",
+        action="store_true"
+    )
+
+    ap.add_argument(
+        "-ip",
+        "--ignore-pickle",
+        help="Ignore preexisting preprocessed data",
+        action="store_true"
     )
 
     # Parse arguments
