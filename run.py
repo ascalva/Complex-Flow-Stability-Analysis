@@ -58,7 +58,7 @@ def init(args):
         # Updates indices
         deduplicate(df, up_index=True)
 
-        df["Boundary"] = [1] * df.shape[0]
+        # df["Boundary"] = [1] * df.shape[0]
 
         df["Points:0"] = df["Points:0"].round(3)
         df["Points:1"] = df["Points:1"].round(3)
@@ -76,11 +76,19 @@ def coefficient_matrix_setup(df):
     # Run with neighbor implementation
     A, B   = build_coefficient_matrix(df)
 
-    import matplotlib.pyplot as plt
+    # import matplotlib.pyplot as plt
+    # import seaborn as sns
+    #
+    # sns.set()
 
-    plt.scatter(df["Points:0"], df["Points:1"], c=df["Boundary"], s=7)
-    plt.savefig("cross_bounds.png", dpi=150)
-    plt.show()
+    # fig, axes = plt.subplots(figsize=(9,9), dpi=100)
+    # axes.scatter(df["Points:0"], df["Points:1"], c=df["Boundary"], s=7)
+    # axes.set_title("Cross slot with boundaries")
+    # axes.set_xlabel("x")
+    # axes.set_ylabel("y")
+    #
+    # plt.savefig("cross_bounds.png")
+    # plt.show()
 
     # Remove infinite eigenvalues
     F, G_B = remove_inf_eigs(A, B)

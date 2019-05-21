@@ -7,14 +7,8 @@
 #          computation exist here.
 #
 
-from .OB_equations2 import LAMBDA, H, get_vars, COORD
-
-# Define bounding values
-X_MIN = 0.977#0.95
-X_MAX = 1.123#1.15
-Y_MIN = 0.977
-Y_MAX = 1.123
-Z_VAL = 0.01
+from .OB_equations2 import get_vars
+from .constants     import *
 
 def update_index(df):
     """
