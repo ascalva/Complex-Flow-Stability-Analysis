@@ -1,7 +1,7 @@
 from enum  import Enum
 
-from . import OB_equations2       as eqF
-from . import boundary_equations  as BC
+from .equations import OB_equations2      as eqF
+from .equations import boundary_equations as BC
 
 # Define bounding values
 X_MIN         = 0.977#0.95

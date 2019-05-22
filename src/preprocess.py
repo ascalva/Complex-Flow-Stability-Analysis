@@ -7,8 +7,7 @@
 #          computation exist here.
 #
 
-from .OB_equations2 import get_vars
-from .constants     import *
+from .constants import *
 
 def update_index(df):
     """
@@ -66,19 +65,19 @@ def negate(df, up_index=False):
 
 def non_dimensionalize_U(df):
     #TODO: make more dynamic
-    for attr in get_vars()[3:5]:
+    for attr in ATTRIBUTES[3:5]:
         df.loc[:, attr] *= LAMBDA / H
 
 
 def non_dimensionalize_gradU(df):
     #TODO: make more dynamic
-    for attr in get_vars()[11:]:
+    for attr in ATTRIBUTES[11:]:
         df.loc[:, attr] *= LAMBDA
 
 
 def non_dimensionalize_gradA(df):
     #TODO: make more dynamic
-    for attr in get_vars()[5:11]:
+    for attr in ATTRIBUTES[5:11]:
         df.loc[:, attr] *= H
 
 

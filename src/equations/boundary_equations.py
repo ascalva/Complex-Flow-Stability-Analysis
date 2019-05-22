@@ -29,10 +29,10 @@ def A11_A11_left_inlet_cen(prms):
     return 1
 
 def m_p_left_inlet_cen(prms):
-    return
+    return -1
 
 def m_p_left_inlet_right(prms):
-    return
+    return 1
 
 # Right wall along right inlet
 def x1_v1_right_inlet(prms):
