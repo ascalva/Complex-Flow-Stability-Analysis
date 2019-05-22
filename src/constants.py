@@ -1,8 +1,7 @@
 from enum  import Enum
 
-from .     import OB_equations2 as eqF
-from .     import boundary_conditions as BC
-from .misc import get_func_name
+from . import OB_equations2       as eqF
+from . import boundary_equations  as BC
 
 # Define bounding values
 X_MIN         = 0.977#0.95
@@ -25,8 +24,16 @@ DY            = eqF.DY
 LAMBDA        = eqF.LAMBDA
 COORD         = eqF.COORD
 
+# Equation information
+EQ_NUM        = eqF.get_equation_number()
+EQ_NAMES      = eqF.get_equation_names()
+VAR_NAMES     = eqF.get_component_names()
 ATTRIBUTES    = eqF.get_vars()
+
+# Inner corner information
+INNR_CRNR_LOC = BC.get_inner_corners()
 
 # Simulation parameters
 LOAD_INTERVAL = 500
 COORD_TOL     = 0.001
+DELIM         = "_"

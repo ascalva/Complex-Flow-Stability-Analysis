@@ -1,10 +1,10 @@
 import numpy as np
 
-from scipy.sparse       import identity, vstack, hstack, lil_matrix
+from scipy.sparse          import identity, vstack, hstack, lil_matrix
 
-from .boundaries        import boundary_condition_A, boundary_condition_B
-from .point_computation import get_neighbor_ind, evaluate_point
-from .constants         import *
+from .boundary_computation import boundary_condition_A, boundary_condition_B
+from .point_computation    import get_neighbor_ind, evaluate_point
+from .constants            import *
 
 #
 # filename: create.py
@@ -81,7 +81,7 @@ def build_coefficient_matrix(df):
     """
 
     # Initialize variables
-    eq_n    = eqF.get_equation_number()
+    eq_n    = EQ_NUM
     m,_     = df.shape
     eq_mtrx = init_matrix(m, eq_n)
 
@@ -89,8 +89,8 @@ def build_coefficient_matrix(df):
     # row is zero at a boundary
     B_ = identity(m, format='lil', dtype=np.cfloat)
 
-    eq_names  = eqF.get_equation_names()
-    var_names = eqF.get_component_names()
+    eq_names  = EQ_NAMES
+    var_names = VAR_NAMES
 
     # bound_point = 0
     # non_bound_point = 0

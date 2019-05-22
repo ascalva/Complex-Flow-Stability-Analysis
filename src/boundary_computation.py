@@ -1,5 +1,6 @@
 import numpy as np
 
+from .misc       import get_func_name
 from .constants  import *
 
 X_LAB         = eqF.COORD[0]
@@ -54,11 +55,9 @@ def get_bound_type_down(df, curr_indx):
 
 
 def get_bound_type_wall(df, curr_indx, neighbors):
-    # if b_name == "left":
     if neighbors[NEIGHBOR["left"]]    == -1:
         b_type = get_bound_type_left(df, curr_indx)
 
-    # elif b_name == "right":
     elif neighbors[NEIGHBOR["right"]] == -1:
         b_type = get_bound_type_right(df, curr_indx)
 
@@ -163,12 +162,12 @@ def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst):
     """
     If a point resides at a boundary, evaluate it properly for the A matrix
     """
-
-    curr_indx = neighbors[0]
-    walls     = list(filter(None, b_lst))
-    wall_num  = len(walls)
-    b_name    = "_".join(walls)
-    b_type    = ""
+    attributes = ATTRIBUTES
+    curr_indx  = neighbors[0]
+    walls      = list(filter(None, b_lst))
+    wall_num   = len(walls)
+    b_name     = DELIM.join(walls)
+    b_type     = ""
 
     if wall_num == 1:
         b_type = get_bound_type_wall(df, curr_indx, neighbors)
@@ -177,18 +176,26 @@ def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst):
         b_type = get_bound_type_corner(df, curr_indx, neighbors)
 
     # Get function name for boundary equation
-    b_name   += "_" + b_type
-    bound     = get_func_name(eq_name, var_name, b_name)
+    b_name   += DELIM + b_type + DELIM
 
-    # Search for function and compute value at point
-    if hasattr(BC, bound):
+    # Index of center cell
+    curr_indx = neighbors[0]
 
-        attributes                = ATTRIBUTES
-        df_row                    = df.loc[curr_indx]
-        variables                 = [df_row[attr] for attr in attributes]
-        mtrx[curr_indx,curr_indx] = getattr(BC, bound)(variables)
+    # Iterate over all neighbors (includes center location)
+    for neigh in range(0, NEIGHBOR_NUM):
 
-        # df.loc[curr_indx, "Boundary"] = 2
+        # Find name of function at current location
+        bound   = get_func_name(eq_name, var_name, b_name + NEIGHBOR_LOC[neigh])
+        df_indx = neighbors[neigh]
+
+        # Search for function and compute value at point, ignore vacant neighb
+        if hasattr(BC, bound) and df_indx != -1:
+
+            df_row                    = df.loc[df_indx]
+            variables                 = [df_row[attr] for attr in attributes]
+            mtrx[curr_indx,curr_indx] = getattr(BC, bound)(variables)
+
+            # df.loc[curr_indx, "Boundary"] = 2
 
 
 def boundary_condition_B(df, neighbors, mtrx):

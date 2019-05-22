@@ -1,3 +1,4 @@
+from .misc      import get_func_name
 from .constants import *
 
 X_LAB         = eqF.COORD[0]
