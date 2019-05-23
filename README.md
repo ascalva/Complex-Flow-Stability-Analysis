@@ -1,8 +1,13 @@
 # Capstone 2 Code #
 #### Alberto Serrano ####
 
-## Description ##
-+ Clean and filter simulation data from either a bend- or crosslot-flow generated from OpenFOAM simulations.
-+ Studies the stability of the simulation by perturbing the 2D system in 3D.
-+ Generates a sparse, coefficient matrix using SciPy and maps all infinite eigenvalues to non-infinite values using the outlined algorithm in the paper "Removal of Infinite Eigenvalues in the Generalized Matrix Eigenvalue Problem" by D. A. Goussis and A. J. Pearlstein.
-+ Generates a Matlab file containing the computed, sparse matrices for every combination of k-values in a specified range.
+## Abstract ##
+It has been shown experimentally that a shear banding flow along a 90 degree microfluidic bend exhibits complex behaviours such as a fluctuating vortex size, which is absent in 2D computational flows. To understand if the complex behavior is only a 3D effect, the 2D stable flow is perturbed sinusoidally in the z-direction and perturbed exponentially in time to determine if there exists an instability. The Oldroyd-B model was used to simulate the flow in a cross slot geometry to simplify the system and benchmark the approach, since it is known both experimentally and computationally that there exists an asymmetric instability along the geometry.
+
+## Pipeline ##
++ Run OpenFOAM simulation
++ Convert VTK data to CSV using ParaView
++ Preprocess data
++ Build coefficient matrices
++ Remove infinite eigenvalues
++ Calculate largest eigenvalues
