@@ -1,8 +1,8 @@
 from .misc      import get_func_name
 from .constants import *
 
-X_LAB         = eqF.COORD[0]
-Y_LAB         = eqF.COORD[1]
+X_LAB = COORD[0]
+Y_LAB = COORD[1]
 
 def get_neighbor_ind(df, indx):
     """
@@ -17,7 +17,7 @@ def get_neighbor_ind(df, indx):
 
     # Initialize boundary bool
     bound = False
-    b_lst = ["","","","",""]
+    b_lst = [""] * NEIGHBOR_NUM
 
     # Get center location
     curr  = df.loc[indx]
@@ -45,7 +45,7 @@ def get_neighbor_ind(df, indx):
         if len(up) == 0:
             up       = [-1];
             bound    = True
-            b_lst[NEIGHBOR["up"]] = "up"
+            b_lst[NEIGHBOR[UP]] = UP
 
     if len(down)  == 0:
         down1 = df[ (df[X_LAB] == x)      & (df[Y_LAB] == y + DY + COORD_TOL) ].index.values
@@ -61,7 +61,7 @@ def get_neighbor_ind(df, indx):
         if len(down) == 0:
             down     = [-1];
             bound    = True
-            b_lst[NEIGHBOR["down"]] = "down"
+            b_lst[NEIGHBOR[DOWN]] = DOWN
 
     if len(left)  == 0:
         left1  = df[ (df[X_LAB] == x - DX + COORD_TOL) & (df[Y_LAB] == y)      ].index.values
@@ -75,7 +75,7 @@ def get_neighbor_ind(df, indx):
         if len(left) == 0:
             left     = [-1]
             bound    = True
-            b_lst[NEIGHBOR["left"]] = "left"
+            b_lst[NEIGHBOR[LEFT]] = LEFT
 
     if len(right) == 0:
         right1 = df[ (df[X_LAB] == x + DX + COORD_TOL) & (df[Y_LAB] == y)      ].index.values
@@ -89,7 +89,7 @@ def get_neighbor_ind(df, indx):
         if len(right) == 0:
             right    = [-1]
             bound    = True
-            b_lst[NEIGHBOR["right"]] = "right"
+            b_lst[NEIGHBOR[RIGHT]] = RIGHT
 
 
     return (indx, *up, *down, *left, *right), bound, b_lst

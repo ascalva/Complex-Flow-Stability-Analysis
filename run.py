@@ -80,7 +80,7 @@ def coefficient_matrix_setup(df):
     # import seaborn as sns
     #
     # sns.set()
-
+    #
     # fig, axes = plt.subplots(figsize=(9,9), dpi=100)
     # axes.scatter(df["Points:0"], df["Points:1"], c=df["Boundary"], s=7)
     # axes.set_title("Cross slot with boundaries")

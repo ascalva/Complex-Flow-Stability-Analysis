@@ -1,10 +1,11 @@
 import numpy as np
 
-from .misc       import get_func_name
-from .constants  import *
+from .misc              import get_func_name, find_row_from_coord
+from .point_computation import get_neighbor_ind
+from .constants         import *
 
-X_LAB         = eqF.COORD[0]
-Y_LAB         = eqF.COORD[1]
+X_LAB = COORD[0]
+Y_LAB = COORD[1]
 
 def get_bound_type_left(df, curr_indx):
     x = df.loc[curr_indx][X_LAB]
@@ -55,16 +56,16 @@ def get_bound_type_down(df, curr_indx):
 
 
 def get_bound_type_wall(df, curr_indx, neighbors):
-    if neighbors[NEIGHBOR["left"]]    == -1:
+    if neighbors[NEIGHBOR[LEFT]]    == -1:
         b_type = get_bound_type_left(df, curr_indx)
 
-    elif neighbors[NEIGHBOR["right"]] == -1:
+    elif neighbors[NEIGHBOR[RIGHT]] == -1:
         b_type = get_bound_type_right(df, curr_indx)
 
-    elif neighbors[NEIGHBOR["up"]]    == -1:
+    elif neighbors[NEIGHBOR[UP]]    == -1:
         b_type = get_bound_type_up(df, curr_indx)
 
-    elif neighbors[NEIGHBOR["down"]]  == -1:
+    elif neighbors[NEIGHBOR[DOWN]]  == -1:
         b_type = get_bound_type_down(df, curr_indx)
 
     else:
@@ -157,6 +158,8 @@ def get_bound_type_corner(df, curr_indx, neighbors):
 
     return c_type
 
+def get_bound_type_corner_inner(df, curr_indx, neighbors):
+    return ""
 
 def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst):
     """
@@ -169,11 +172,17 @@ def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst):
     b_name     = DELIM.join(walls)
     b_type     = ""
 
-    if wall_num == 1:
+    # Wall boundary
+    if wall_num   == 1:
         b_type = get_bound_type_wall(df, curr_indx, neighbors)
 
+    # Outer corner boundary
     elif wall_num == 2:
         b_type = get_bound_type_corner(df, curr_indx, neighbors)
+
+    # Inner corner boundary
+    elif wall_num == 0:
+        b_type = get_bound_type_corner_inner(df, curr_indx, neighbors)
 
     # Get function name for boundary equation
     b_name   += DELIM + b_type + DELIM
@@ -195,7 +204,7 @@ def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst):
             variables                 = [df_row[attr] for attr in attributes]
             mtrx[curr_indx,curr_indx] = getattr(BC, bound)(variables)
 
-            # df.loc[curr_indx, "Boundary"] = 2
+            df.loc[curr_indx, "Boundary"] = 2
 
 
 def boundary_condition_B(df, neighbors, mtrx):
@@ -203,4 +212,36 @@ def boundary_condition_B(df, neighbors, mtrx):
     If a point resides at a boundary, evaluate it properly for the B matrix
     """
     indx            = neighbors[0]
-    mtrx[indx,indx] = 0
+    mtrx[indx,indx] = 0.0
+
+def evaluate_inner_corners(df, eq_mtrx):
+    """
+    Evaluate inner corners of the simulation. Special care is required since
+    are not missing any neighbors, and are evaluated as non-boundary points.
+    Their locations are predefined and evaluated after the main evaluation loop.
+    """
+
+    # Get all necessary attributes/equation names
+    eq_n      = EQ_NUM
+    eq_names  = EQ_NAMES
+    var_names = VAR_NAMES
+    corners   = INNR_CRNR_LOC
+
+    # Iterate over all 4 inner corners
+    for x,y in corners:
+
+        # Find row index and neighbors
+        indx          = find_row_from_coord(df, x, y)
+        neighbors,_,_ = get_neighbor_ind(df, indx)
+
+        # At a specific location, calculate the value for each matrix with
+        # its respective equation.
+        for r_indx in range(eq_n):
+            for c_indx in range(eq_n):
+
+                # Get current values (matrix and names of eq and var)
+                curr_eq_mtrx  = eq_mtrx[r_indx][c_indx]
+                curr_eq_name  = eq_names[r_indx]
+                curr_var_name = var_names[c_indx]
+
+                boundary_condition_A(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name, [])

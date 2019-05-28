@@ -288,16 +288,16 @@ def x1_v2_cen(prms):
     return - prms[12]
 
 def x1_A11_right(prms):
-    return dx()
+    return dx() * El
 
 def x1_A11_left(prms):
-    return - dx()
+    return - dx() * El
 
 def x1_A12_down(prms):
-    return dy()
+    return dy() * El
 
 def x1_A12_up(prms):
-    return - dy()
+    return - dy() * El
 
 def x1_A22_cen(prms):
     return 0
@@ -305,11 +305,11 @@ def x1_A22_cen(prms):
 
 ############################### x2 Equation ################################
 
-def x2_p_right(prms):
-    return - dy()
+def x2_p_down(prms):
+    return - dy() * El
 
-def x2_p_left(prms):
-    return dy()
+def x2_p_up(prms):
+    return dy() * El
 
 def x2_v1_cen(prms):
     return - prms[13]
@@ -333,16 +333,16 @@ def x2_A11_cen(prms):
     return 0
 
 def x2_A12_right(prms):
-    return dx()
+    return dx() * El
 
 def x2_A12_left(prms):
-    return - dx()
+    return - dx() * El
 
 def x2_A22_down(prms):
-    return dy()
+    return dy() * El
 
 def x2_A22_up(prms):
-    return - dy()
+    return - dy() * El
 
 
 ############################### m Equation ################################

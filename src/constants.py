@@ -10,11 +10,19 @@ Y_MIN         = 0.977
 Y_MAX         = 1.123
 Z_VAL         = 0.01
 
+# Neighbor/channel names
+CENTER        = "cen"
+UP            = "up"
+DOWN          = "down"
+LEFT          = "left"
+RIGHT         = "right"
+INLET         = "inlet"
+OUTLET        = "outlet"
+
 # Neighbor info
 NEIGHBOR_NUM  = 5
-NEIGHBOR_LOC  = ["cen", "up", "down", "left", "right"]
-CHANNEL_TYPE  = ["inlet", "outlet"]
-BOUND_NAME    = "bound"
+NEIGHBOR_LOC  = [CENTER, UP, DOWN, LEFT, RIGHT]
+CHANNEL_TYPE  = [INLET, OUTLET]
 NEIGHBOR      = dict((v,k) for k,v in enumerate(NEIGHBOR_LOC))
 
 # System parameters
@@ -34,6 +42,7 @@ ATTRIBUTES    = eqF.get_vars()
 INNR_CRNR_LOC = BC.get_inner_corners()
 
 # Simulation parameters
+NULL_NEIGHBOR = -1
 LOAD_INTERVAL = 500
 COORD_TOL     = 0.001
 DELIM         = "_"

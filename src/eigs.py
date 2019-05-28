@@ -73,8 +73,8 @@ def remove_inf_eigs(A, B):
 
     # Initialize a diagonal matrix with random values.
     E_k   = identity(k, format='csr', dtype=np.cfloat)
-    E_k    .setdiag(-np.random.rand(k))
-
+    E_k    .setdiag(-np.random.rand(k) - 100)
+    # print("Random vars:" + str(k))
     # Split A matrix to form the H and P matrices
     H     = A[:n_,:]
     P     = A[n_:,:]

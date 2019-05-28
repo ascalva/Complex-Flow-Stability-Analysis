@@ -2,7 +2,8 @@ import numpy as np
 
 from scipy.sparse          import identity, vstack, hstack, lil_matrix
 
-from .boundary_computation import boundary_condition_A, boundary_condition_B
+from .boundary_computation import boundary_condition_A, boundary_condition_B, \
+                                  evaluate_inner_corners
 from .point_computation    import get_neighbor_ind, evaluate_point
 from .constants            import *
 
@@ -105,7 +106,7 @@ def build_coefficient_matrix(df):
         neighbors, bound, b_lst = get_neighbor_ind(df, indx)
 
         # Bound B if at a boundary
-        if bound: boundary_condition_B(df, neighbors, B_);
+        if bound: boundary_condition_B(df, neighbors, B_)#;bound_point+=1
         # else: non_bound_point+=1
 
         # At a specific location, calculate the value for each matrix with
@@ -126,13 +127,15 @@ def build_coefficient_matrix(df):
                 else:
                     boundary_condition_A(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name, b_lst)
 
+    # Evaluate inner corners (invisible because all their neighbors exist)
+    evaluate_inner_corners(df, eq_mtrx)
 
     # Finalize A matrix
     A_mtrx = stitch_matrix( eq_mtrx, eq_n )
 
     # Build and finalize B matrix
     B_mtrx = stitch_matrix( build_B(B_, eq_names, var_names, m, eq_n), eq_n )
-
+    # print(bound_point)
     return A_mtrx, B_mtrx
 
 
