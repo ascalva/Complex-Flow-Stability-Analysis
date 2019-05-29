@@ -29,7 +29,7 @@ def init(args):
     filename = "".join(args["file"].split("/")[-1].split(".")[:-1])
 
     # Check if preprocessed data frame exists in intermediate_data directory
-    if check_dataframe(filename) and not args["ignore_pickle"]:
+    if check_dataframe(filename) and args["use_pickle"]:
 
         print("Loading preexisting pickle file: {0}".format(filename))
 
@@ -119,8 +119,8 @@ def main():
     )
 
     ap.add_argument(
-        "-ip",
-        "--ignore-pickle",
+        "-up",
+        "--use-pickle",
         help="Ignore preexisting preprocessed data",
         action="store_true"
     )
