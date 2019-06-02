@@ -11,3 +11,6 @@ It has been shown experimentally that a shear banding flow along a 90 degree mic
 + Build coefficient matrices
 + Remove infinite eigenvalues
 + Calculate largest eigenvalues
+
+## Run ##
+`python3 run.py [-h] [-f FILE] [-v] [-up]`

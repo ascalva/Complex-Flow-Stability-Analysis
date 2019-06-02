@@ -491,3 +491,275 @@ def A12_A12_down_left_inlet_cen(prms):
 
 def A22_A22_down_left_inlet_cen(prms):
     return 1
+
+
+### Inner corners ###
+
+# Top left inner corner
+def x1_v1_inner_up_left_cen(prms):
+    return 1
+
+def x1_v1_inner_up_left_cen(prms):
+    return 1
+
+def m_p_inner_up_left_cen(prms):
+    return 1
+
+def m_p_inner_up_left_left(prms):
+    return -1
+
+def m_p_inner_up_left_right(prms):
+    return -1
+
+def m_p_inner_up_left_up(prms):
+    return -1
+
+def m_p_inner_up_left_down(prms):
+    return -1
+
+def A11_A11_inner_up_left_cen(prms):
+    return 1
+
+def A11_A11_inner_up_left_left(prms):
+    return -1
+
+def A11_A11_inner_up_left_right(prms):
+    return -1
+
+def A11_A11_inner_up_left_up(prms):
+    return -1
+
+def A11_A11_inner_up_left_down(prms):
+    return -1
+
+def A12_A12_inner_up_left_cen(prms):
+    return 1
+
+def A12_A12_inner_up_left_left(prms):
+    return -1
+
+def A12_A12_inner_up_left_right(prms):
+    return -1
+
+def A12_A12_inner_up_left_up(prms):
+    return -1
+
+def A12_A12_inner_up_left_down(prms):
+    return -1
+
+def A22_A22_inner_up_left_cen(prms):
+    return 1
+
+def A22_A22_inner_up_left_left(prms):
+    return -1
+
+def A22_A22_inner_up_left_right(prms):
+    return -1
+
+def A22_A22_inner_up_left_up(prms):
+    return -1
+
+def A22_A22_inner_up_left_down(prms):
+    return -1
+
+# Top right inner corner
+def x1_v1_inner_up_right_cen(prms):
+    return 1
+
+def x1_v1_inner_up_right_cen(prms):
+    return 1
+
+def m_p_inner_up_right_cen(prms):
+    return 1
+
+def m_p_inner_up_right_left(prms):
+    return -1
+
+def m_p_inner_up_right_right(prms):
+    return -1
+
+def m_p_inner_up_right_up(prms):
+    return -1
+
+def m_p_inner_up_right_down(prms):
+    return -1
+
+def A11_A11_inner_up_right_cen(prms):
+    return 1
+
+def A11_A11_inner_up_right_left(prms):
+    return -1
+
+def A11_A11_inner_up_right_right(prms):
+    return -1
+
+def A11_A11_inner_up_right_up(prms):
+    return -1
+
+def A11_A11_inner_up_right_down(prms):
+    return -1
+
+def A12_A12_inner_up_right_cen(prms):
+    return 1
+
+def A12_A12_inner_up_right_left(prms):
+    return -1
+
+def A12_A12_inner_up_right_right(prms):
+    return -1
+
+def A12_A12_inner_up_right_up(prms):
+    return -1
+
+def A12_A12_inner_up_right_down(prms):
+    return -1
+
+def A22_A22_inner_up_right_cen(prms):
+    return 1
+
+def A22_A22_inner_up_right_left(prms):
+    return -1
+
+def A22_A22_inner_up_right_right(prms):
+    return -1
+
+def A22_A22_inner_up_right_up(prms):
+    return -1
+
+def A22_A22_inner_up_right_down(prms):
+    return -1
+
+
+# Bottom right inner corner
+def x1_v1_inner_down_right_cen(prms):
+    return 1
+
+def x1_v1_inner_down_right_cen(prms):
+    return 1
+
+def m_p_inner_down_right_cen(prms):
+    return 1
+
+def m_p_inner_down_right_left(prms):
+    return -1
+
+def m_p_inner_down_right_right(prms):
+    return -1
+
+def m_p_inner_down_right_up(prms):
+    return -1
+
+def m_p_inner_down_right_down(prms):
+    return -1
+
+def A11_A11_inner_down_right_cen(prms):
+    return 1
+
+def A11_A11_inner_down_right_left(prms):
+    return -1
+
+def A11_A11_inner_down_right_right(prms):
+    return -1
+
+def A11_A11_inner_down_right_up(prms):
+    return -1
+
+def A11_A11_inner_down_right_down(prms):
+    return -1
+
+def A12_A12_inner_down_right_cen(prms):
+    return 1
+
+def A12_A12_inner_down_right_left(prms):
+    return -1
+
+def A12_A12_inner_down_right_right(prms):
+    return -1
+
+def A12_A12_inner_down_right_up(prms):
+    return -1
+
+def A12_A12_inner_down_right_down(prms):
+    return -1
+
+def A22_A22_inner_down_right_cen(prms):
+    return 1
+
+def A22_A22_inner_down_right_left(prms):
+    return -1
+
+def A22_A22_inner_down_right_right(prms):
+    return -1
+
+def A22_A22_inner_down_right_up(prms):
+    return -1
+
+def A22_A22_inner_down_right_down(prms):
+    return -1
+
+# Bottom left inner corner
+def x1_v1_inner_down_left_cen(prms):
+    return 1
+
+def x1_v1_inner_down_left_cen(prms):
+    return 1
+
+def m_p_inner_down_left_cen(prms):
+    return 1
+
+def m_p_inner_down_left_left(prms):
+    return -1
+
+def m_p_inner_down_left_right(prms):
+    return -1
+
+def m_p_inner_down_left_up(prms):
+    return -1
+
+def m_p_inner_down_left_down(prms):
+    return -1
+
+def A11_A11_inner_down_left_cen(prms):
+    return 1
+
+def A11_A11_inner_down_left_left(prms):
+    return -1
+
+def A11_A11_inner_down_left_right(prms):
+    return -1
+
+def A11_A11_inner_down_left_up(prms):
+    return -1
+
+def A11_A11_inner_down_left_down(prms):
+    return -1
+
+def A12_A12_inner_down_left_cen(prms):
+    return 1
+
+def A12_A12_inner_down_left_left(prms):
+    return -1
+
+def A12_A12_inner_down_left_right(prms):
+    return -1
+
+def A12_A12_inner_down_left_up(prms):
+    return -1
+
+def A12_A12_inner_down_left_down(prms):
+    return -1
+
+def A22_A22_inner_down_left_cen(prms):
+    return 1
+
+def A22_A22_inner_down_left_left(prms):
+    return -1
+
+def A22_A22_inner_down_left_right(prms):
+    return -1
+
+def A22_A22_inner_down_left_up(prms):
+    return -1
+
+def A22_A22_inner_down_left_down(prms):
+    return -1

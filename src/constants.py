@@ -18,12 +18,19 @@ LEFT          = "left"
 RIGHT         = "right"
 INLET         = "inlet"
 OUTLET        = "outlet"
+INNER         = "inner"
 
 # Neighbor info
 NEIGHBOR_NUM  = 5
 NEIGHBOR_LOC  = [CENTER, UP, DOWN, LEFT, RIGHT]
 CHANNEL_TYPE  = [INLET, OUTLET]
 NEIGHBOR      = dict((v,k) for k,v in enumerate(NEIGHBOR_LOC))
+C_TYPE        = [
+                    [INNER, UP,   LEFT ],
+                    [INNER, UP,   RIGHT],
+                    [INNER, DOWN, LEFT ],
+                    [INNER, DOWN, RIGHT]
+                ]
 
 # System parameters
 H             = eqF.H

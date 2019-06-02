@@ -158,10 +158,8 @@ def get_bound_type_corner(df, curr_indx, neighbors):
 
     return c_type
 
-def get_bound_type_corner_inner(df, curr_indx, neighbors):
-    return ""
 
-def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst):
+def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst, inner=False):
     """
     If a point resides at a boundary, evaluate it properly for the A matrix
     """
@@ -175,17 +173,19 @@ def boundary_condition_A(df, neighbors, mtrx, eq_name, var_name, b_lst):
     # Wall boundary
     if wall_num   == 1:
         b_type = get_bound_type_wall(df, curr_indx, neighbors)
+        b_name += DELIM + b_type + DELIM
 
     # Outer corner boundary
     elif wall_num == 2:
         b_type = get_bound_type_corner(df, curr_indx, neighbors)
+        b_name += DELIM + b_type + DELIM
 
     # Inner corner boundary
-    elif wall_num == 0:
-        b_type = get_bound_type_corner_inner(df, curr_indx, neighbors)
+    else:
+        b_name += DELIM
 
     # Get function name for boundary equation
-    b_name   += DELIM + b_type + DELIM
+    # b_name   += DELIM + b_type + DELIM
 
     # Index of center cell
     curr_indx = neighbors[0]
@@ -228,10 +228,10 @@ def evaluate_inner_corners(df, eq_mtrx):
     corners   = INNR_CRNR_LOC
 
     # Iterate over all 4 inner corners
-    for x,y in corners:
+    for crnr in range(len(corners)):
 
         # Find row index and neighbors
-        indx          = find_row_from_coord(df, x, y)
+        indx          = find_row_from_coord(df, *corners[crnr])
         neighbors,_,_ = get_neighbor_ind(df, indx)
 
         # At a specific location, calculate the value for each matrix with
@@ -244,4 +244,4 @@ def evaluate_inner_corners(df, eq_mtrx):
                 curr_eq_name  = eq_names[r_indx]
                 curr_var_name = var_names[c_indx]
 
-                boundary_condition_A(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name, [])
+                boundary_condition_A(df, neighbors, curr_eq_mtrx, curr_eq_name, curr_var_name, C_TYPE[crnr], True)
